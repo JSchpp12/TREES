@@ -8,6 +8,26 @@ AVL::AVL()
 
 void AVL::Insert(char in_key[])
 {
+	AVL_Node* returnedNode; 
+
+	/*
+	1. insert new node 
+	2. calculate new BFs 
+	3. check for a BF that is out of spec
+	4. figure out what type of rotation is needed
+	5. correct with necessar rotation type 
+	*/
+
+	_insert(in_key); 
+
+}
+
+int AVL::_insert(char in_key[])
+{
+	//this will be slightly different from the BST insert, for simplicity will return node pointer so focus can be set on subtrees
+	//can't seem to return AVL_Node object 
+	//will return node_storage index instead, will work the same way 
+
 	int in_weight = 0;
 	bool cont = false;
 	bool done = false;
@@ -174,10 +194,18 @@ void AVL::_createRoot(char input[])
 
 	AVL_Node newNode;
 	newNode.counter = 1;
+	newNode.BF = 0; 
 
 	strcpy(newNode.key, input);
 
 	//store node into memory 
 	nodeStorage[nodeStorage_index] = newNode;
 	nodeStorage_index++;
+}
+
+void AVL::_calculateBalanceFactor(AVL_Node* focusNode)
+{
+	//this should just calculate the balance factor of one node
+	//call from method that will handle which nodes need to be recalculated 
+
 }

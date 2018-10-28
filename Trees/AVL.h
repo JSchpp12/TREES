@@ -28,10 +28,12 @@ private:
 	AVL_Node* rootNode;
 	int nodeStorage_index = 0;
 
+	int _insert(char in_key[]); 
 	void _createRoot(char input[]);
 	bool _search(char in_key[], bool call_internal, bool call_delete);
 	void _traverse(AVL_Node* in_node);
-
+ 
+	void _calculateBalanceFactor(AVL_Node* focusNode); 
 	void RR_rotate();
 	void LL_rotate(); 
 };
