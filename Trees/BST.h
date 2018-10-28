@@ -21,8 +21,8 @@ public:
 		int counter; 
 	};
 
-	
-	~BST();
+	void Insert(char in_key[]);
+	//void Search(char in_key[]);
 
 private: 
 	Node* currentFocus; 
@@ -30,10 +30,7 @@ private:
 	Node* rootNode; 
 	int nodeStorage_index = 0; 
 
-	void Insert(char in_key[]); 
-	void Search(char in_key[]); 
 	void _createRoot(char input[]); 
 	bool _search(char in_key[], bool call_internal, bool call_delete); 
-	int _calculateKeyWeight(char in_key[]); 
-	void _setNodeKey(Node* currentNode, char in_key[]); 
+	void _traverse(Node* in_node); 
 };

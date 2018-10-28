@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "BST.h"
 
-
-
 BST::BST()
 {
 }
@@ -15,9 +13,6 @@ void BST::Insert(char in_key[])
 	bool found;
 	Node* currentNode;
 
-	//calculate the weight of the in_key 
-	in_weight = _calculateKeyWeight(in_key); 
-
 	//need to search first 
 	found = _search(in_key, true, false);
 	//if not found, need to make a new node 
@@ -28,18 +23,22 @@ void BST::Insert(char in_key[])
 			currentNode = rootNode;
 			while (done == false)
 			{
-				if (in_weight > currentNode->keyWeight)
+				//increment number of comparisons counter 
+				this->numOfComparisons++; 
+
+				//else if (in_weight > currentNode->keyWeight)
+				if (strcmp(currentNode->key, in_key) < 0)
 				{
 					if (currentNode->rightChild == nullptr)
 					{
 						//this is empty spot
 						Node newNode; 
 						newNode.counter = 1; 
-						newNode.keyWeight = _calculateKeyWeight(in_key); 
+						//newNode.keyWeight = _calculateKeyWeight(in_key); 
 						newNode.parent = currentNode; 
 
-						//set the key in the node 
-						_setNodeKey(&newNode, in_key); 
+						//set the new node key 
+						strcpy(newNode.key, in_key); 
 
 						//store the new node
 						nodeStorage[nodeStorage_index] = newNode;
@@ -54,23 +53,22 @@ void BST::Insert(char in_key[])
 						currentNode = currentNode->rightChild;
 					}
 				}
-				else if (in_weight < currentNode->keyWeight)
+				//else if (in_weight < currentNode->keyWeight)
+				else if (strcmp(currentNode->key, in_key) > 0)
 				{
 					if (currentNode->leftChild == nullptr)
 					{
 						//this is an empty spot
 						//Node newNode(in_key, currentNode);
 
-						//CREATE A NEW NODE-----------------------------
-
 						Node newNode; 
 						//copy the key over 
 						newNode.counter = 1; 
-						newNode.keyWeight = _calculateKeyWeight(in_key); 
+						//newNode.keyWeight = _calculateKeyWeight(in_key); 
 						newNode.parent = currentNode; 
 
-						//set the key in the node
-						_setNodeKey(&newNode, in_key); 
+						//set the newNode key
+						strcpy(newNode.key, in_key); 
 
 						//copy the node to memory 
 						nodeStorage[nodeStorage_index] = newNode; 
@@ -100,12 +98,8 @@ void BST::_createRoot(char input[])
 	
 	Node newNode;
 	newNode.counter = 1;
-	
-	//copy the values in the input into the node 
-	_setNodeKey(&newNode, input); 
 
-	//calculate the key weight for the node 
-	newNode.keyWeight = _calculateKeyWeight(input); 
+	strcpy(newNode.key, input); 
 
 	//store node into memory 
 	nodeStorage[nodeStorage_index] = newNode;
@@ -121,9 +115,6 @@ bool BST::_search(char in_key[], bool call_internal, bool call_delete)
 	bool done = false; 
 	Node* currentNode; 
 
-	//calculate the weight of the string contained in the character array (INPUT)
-	charWeight = _calculateKeyWeight(in_key); 
-
 	//look for the correct node 
 	if (rootNode != nullptr)
 	{
@@ -132,10 +123,9 @@ bool BST::_search(char in_key[], bool call_internal, bool call_delete)
 		{
 			if (currentNode)
 			{
-				if (currentNode->keyWeight == in_weight)
+				if (0 == strcmp(currentNode->key, in_key))
 				{
-					
-					//found node with same weight
+					//found node
 					if (call_internal == true)
 					{
 						//called from insert method, so add 1 to found node 
@@ -157,7 +147,8 @@ bool BST::_search(char in_key[], bool call_internal, bool call_delete)
 						found = true;
 					}
 				}
-				else if (in_weight > currentNode->keyWeight)
+				else if (strcmp(currentNode->key, in_key) < 0)
+				//else if (in_weight > currentNode->keyWeight)
 				{
 					if (currentNode->rightChild != nullptr)
 					{
@@ -170,7 +161,8 @@ bool BST::_search(char in_key[], bool call_internal, bool call_delete)
 						found = false;
 					}
 				}
-				else if (in_weight < currentNode->keyWeight)
+				//else if (in_weight < currentNode->keyWeight)
+				else if (strcmp(currentNode->key, in_key) > 0)
 				{
 					if (currentNode->rightChild != nullptr)
 					{
@@ -195,30 +187,16 @@ bool BST::_search(char in_key[], bool call_internal, bool call_delete)
 	return found;
 }
 
-int BST::_calculateKeyWeight(char in_key[])
+void BST::_traverse(Node* in_node)
 {
-	int counter = 0; 
-	int temp = 0; 
-	int in_weight = 0;
-
-	while ((in_key[counter] != -52) && (counter <= 50))
+	if (in_node != nullptr)
 	{
-		temp = in_key[counter]; 
-		in_weight = in_weight + temp; 
-		counter++; 
+		_traverse(in_node->leftChild);
+		std::cout << in_node->key << " " << in_node->counter << "\n";
+		_traverse(in_node->rightChild);
 	}
-
-	return in_weight; 
-}
-
-void BST::_setNodeKey(Node* currentNode, char in_key[])
-{
-	//this will copy the char array to the node 
-	int counter = 0; 
-
-	while ((in_key[counter] != -52) && (counter <= 50))
+	else
 	{
-		currentNode->key[counter] = in_key[counter]; 
-		counter++; 
+		return;
 	}
 }
