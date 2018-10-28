@@ -108,7 +108,6 @@ void BST::_createRoot(char input[])
 
 bool BST::_search(char in_key[], bool call_internal, bool call_delete)
 {
-	int charWeight; 
 	int in_weight = 0;
 	int counter = 0;
 	bool found = false; 

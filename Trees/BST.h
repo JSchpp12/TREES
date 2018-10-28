@@ -16,8 +16,7 @@ public:
 		Node* leftChild; 
 		Node* parent; 
 		char key[50]; 
-		int lengthOfChar = 0; 
-		int keyWeight; 
+		int lengthOfChar = 0;  
 		int counter; 
 	};
 
