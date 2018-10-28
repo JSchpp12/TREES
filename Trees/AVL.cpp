@@ -87,6 +87,7 @@ int AVL::_insert(char in_key[])
 						newNode.counter = 1;
 						//newNode.keyWeight = _calculateKeyWeight(in_key); 
 						newNode.parent = currentNode;
+						
 
 						//set the newNode key
 						strcpy(newNode.key, in_key);
@@ -111,6 +112,8 @@ int AVL::_insert(char in_key[])
 			this->_createRoot(in_key);
 		}
 	}
+	//temp ---------------------------------------------
+	return 0; 
 }
 
 bool AVL::_search(char in_key[], bool call_internal, bool call_delete)
@@ -208,4 +211,50 @@ void AVL::_calculateBalanceFactor(AVL_Node* focusNode)
 	//this should just calculate the balance factor of one node
 	//call from method that will handle which nodes need to be recalculated 
 
+}
+
+void AVL::_checkForImbalance(AVL_Node* focusNode)
+{
+	bool done = false; 
+
+	while (done == false)
+	{
+		if (focusNode->BF >= 2)
+		{
+			//node is out of balance need to figure out what type of rotation to do 
+			//right subtree is too big 
+		}
+		else if (focusNode->BF <= -2)
+		{
+			//need to rebalance the subtrees 
+			//left subtree is too big 
+		}
+		else
+		{
+			//need to select subtree nodes
+
+		}
+	}
+}
+
+int AVL::_getHeightOfNode(AVL_Node* focusNode)
+{
+	if (focusNode == nullptr)
+	{
+		return 0; 
+	}
+	else
+	{
+		int ret1 = _getHeightOfNode(focusNode->rightChild); 
+		int ret2 = _getHeightOfNode(focusNode->leftChild); 
+		
+		if (ret1 > ret2)
+		{
+			return (ret1 + 1); 
+		}
+		else
+		{
+			return (ret2 + 1); 
+		}
+	}
 }

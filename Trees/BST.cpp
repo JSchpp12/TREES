@@ -5,6 +5,11 @@ BST::BST()
 {
 }
 
+void BST::List()
+{
+	_traverse(rootNode); 
+}
+
 void BST::Insert(char in_key[])
 {
 	int in_weight = 0; 
@@ -36,6 +41,8 @@ void BST::Insert(char in_key[])
 						newNode.counter = 1; 
 						//newNode.keyWeight = _calculateKeyWeight(in_key); 
 						newNode.parent = currentNode; 
+						newNode.leftChild = nullptr;
+						newNode.rightChild = nullptr; 
 
 						//set the new node key 
 						strcpy(newNode.key, in_key); 
@@ -62,10 +69,10 @@ void BST::Insert(char in_key[])
 						//Node newNode(in_key, currentNode);
 
 						Node newNode; 
-						//copy the key over 
 						newNode.counter = 1; 
-						//newNode.keyWeight = _calculateKeyWeight(in_key); 
 						newNode.parent = currentNode; 
+						newNode.rightChild = nullptr; 
+						newNode.leftChild = nullptr; 
 
 						//set the newNode key
 						strcpy(newNode.key, in_key); 
@@ -101,9 +108,15 @@ void BST::_createRoot(char input[])
 
 	strcpy(newNode.key, input); 
 
+	newNode.rightChild = nullptr; 
+	newNode.leftChild = nullptr; 
+
 	//store node into memory 
 	nodeStorage[nodeStorage_index] = newNode;
+	rootNode = &nodeStorage[nodeStorage_index]; 
+
 	nodeStorage_index++;
+
 }
 
 bool BST::_search(char in_key[], bool call_internal, bool call_delete)

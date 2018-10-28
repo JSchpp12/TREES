@@ -21,6 +21,7 @@ public:
 	};
 
 	void Insert(char in_key[]);
+	void List(); 
 	//void Search(char in_key[]);
 
 private: 
