@@ -8,7 +8,6 @@ public:
 		int BF; 
 		AVL_Node* leftChild; 
 		AVL_Node* rightChild; 
-		AVL_Node* parentNode; 
 
 	};
 
