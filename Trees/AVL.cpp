@@ -12,19 +12,20 @@ AVL::AVL()
 void AVL::Insert(char in_key[])
 {
 	int insertIndex;
+	bool correctionNeeded; 
 
 	/*
 	1. insert new node 
 	2. calculate new BFs 
 	3. check for a BF that is out of spec
 	4. figure out what type of rotation is needed
-	5. correct with necessar rotation type 
+	5. correct with necessary rotation type 
 	*/
 
 	insertIndex = _insert(in_key); 
 	_updateBalanceFactors(); 
 	std::cout << "rootBF = " << rootNode->BF << "\n"; 
- 	_checkForImbalance(); 
+ 	correctionNeeded = _checkForImbalance(in_key); 
 
 }
 
@@ -270,16 +271,17 @@ void AVL::_updateBalanceFactors()
 			//no change
 			complete = true; 
 		}
-
 	} while (complete == false);
 }
 
-void AVL::_checkForImbalance()
+bool AVL::_checkForImbalance(char new_key[])
 {
-	AVL_Node* focusNode; 
-	focusNode = rootNode; 
+	AVL_Node* focusNode, nodeCorrection;
+	focusNode = rootNode;
 	//start check from rootnode 
-	bool done = false; 
+	bool done = false;
+	bool correctionNeeded = false; 
+
 	if ((rootNode->BF >= 2) || (rootNode->BF <= -2))
 	{
 		do
@@ -291,8 +293,9 @@ void AVL::_checkForImbalance()
 				if ((focusNode->leftChild->BF < 2) && (focusNode->leftChild->BF > -2))
 				{
 					//the focusNode now is the highest ancestor where the roatation needs to occur
-					cout << focusNode->key << "\n";
-					done = true; 
+					//cout << focusNode->key << "\n";
+					done = true;
+					correctionNeeded = true; 
 				}
 				else focusNode = focusNode->leftChild;
 			}
@@ -303,14 +306,67 @@ void AVL::_checkForImbalance()
 				if ((focusNode->rightChild->BF < 2) && (focusNode->rightChild->BF > -2))
 				{
 					//the focusNode now is the highest ancestor where the roatation needs to occur
-					cout << focusNode->key << "\n"; 
-					done = true; 
+					done = true;
+					correctionNeeded = true; 
 				}
 				else focusNode = focusNode->rightChild;
 			}
-		} while (done == false); 
+		} while (done == false);
+		std::cout << focusNode->key << "\n";
 	}
 	std::cout << "Completed Check \n";
+}
+
+void AVL::_rotationHandler(AVL_Node* correctionCenter, char new_key[])
+{
+	char tempContainer[50]; 
+
+	if (correctionCenter->BF == -2)
+	{
+		//insertion was done in either 
+		//x's right subtree's left subtree 
+		//x's right subtree's right subtree
+		//look for the nodes below and see if BF = 1, then look at that nodes child and look for the new_key
+		if (correctionCenter->leftChild->BF == -1)
+		{
+			//insertion was done in the left (RR)
+			
+		}
+		else if (correctionCenter->leftChild->BF == 1)
+		{
+			//insertion was done in the right(RL)
+
+		}
+	}
+	else if (correctionCenter->BF == 2)
+	{
+		//insertion was done in either 
+		//x's left subtree's left subtree
+		//x's left subtree's right subtree
+		if (correctionCenter->rightChild->BF == -1)
+		{
+			//insertion was done on the right (LR)
+
+		}
+		else if (correctionCenter->rightChild->BF == 1)
+		{
+			//insertion was done on the right (LL)
+
+		}
+	}
+}
+
+void AVL::RR_rotate(AVL_Node* correctionCenter)
+{
+	AVL_Node *middleOfRotation, *treeConnector; 
+
+	//this node will become the parent of the other nodes after the rotation
+	middleOfRotation = correctionCenter->rightChild;
+	
+	//this node will be the parent of the subtree after rotation -- will be right child of the treeConnector 
+	treeConnector = correctionCenter->parent; 
+
+
 }
 
 int AVL::_calculateBalanceFactor(AVL_Node* tippingNode)
@@ -352,7 +408,6 @@ int AVL::_getNodeHeight(AVL_Node* focusNode)
 			ret2 = _getNodeHeight(focusNode->leftChild);
 		}
 		else ret2 = 0; 
-		
 
 		if (ret1 > ret2)
 		{
