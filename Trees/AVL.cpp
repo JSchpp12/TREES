@@ -296,18 +296,18 @@ void AVL::_checkForImbalance(AVL_Node* focusNode)
 	}
 }
 
-int AVL::_calculateBalanceFactor(AVL_Node* focusNode)
+int AVL::_calculateBalanceFactor(AVL_Node* tippingNode)
 {
 	int rightHeight, leftHeight; 
-	if (focusNode->rightChild != nullptr)
+	if (tippingNode->rightChild != nullptr)
 	{
-		rightHeight = _getNodeHeight(focusNode->rightChild);
+		rightHeight = _getNodeHeight(tippingNode->rightChild);
 	}
 	else rightHeight = 0; 
 	 
-	if (focusNode->leftChild != nullptr)
+	if (tippingNode->leftChild != nullptr)
 	{
-		leftHeight = _getNodeHeight(focusNode->leftChild);
+		leftHeight = _getNodeHeight(tippingNode->leftChild);
 	}
 	else leftHeight = 0; 
 	 
@@ -327,13 +327,13 @@ int AVL::_getNodeHeight(AVL_Node* focusNode)
 	{
 		if (focusNode->rightChild != nullptr)
 		{
-			ret1 = _calculateBalanceFactor(focusNode->rightChild);
+			ret1 = _getNodeHeight(focusNode->rightChild);
 		}
 		else ret1 = 0; 
 
 		if (focusNode->leftChild != nullptr)
 		{
-			ret2 = _calculateBalanceFactor(focusNode->leftChild);
+			ret2 = _getNodeHeight(focusNode->leftChild);
 		}
 		else ret2 = 0; 
 		
