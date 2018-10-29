@@ -23,6 +23,8 @@ void AVL::Insert(char in_key[])
 
 	insertIndex = _insert(in_key); 
 	_updateBalanceFactors(); 
+	std::cout << "rootBF = " << rootNode->BF << "\n"; 
+ 	_checkForImbalance(); 
 
 }
 
@@ -247,19 +249,19 @@ void AVL::_updateBalanceFactors()
 		currentNode->BF = _calculateBalanceFactor(currentNode); 
 		if (currentNode->BF < prevBF)
 		{
-			//insert occured in left subtree, follow this down 
-			if (currentNode->leftChild != nullptr)
+			//insert occured in right subtree, follow this down 
+			if (currentNode->rightChild != nullptr)
 			{
-				currentNode = currentNode->leftChild;
+				currentNode = currentNode->rightChild;
 			}
 			else complete = true; 
 		}
 		else if (currentNode->BF > prevBF)
 		{
-			//insert occured in right subtree, follw this down 
-			if (currentNode->rightChild == nullptr)
+			//insert occured in left subtree, follw this down 
+			if (currentNode->leftChild != nullptr)
 			{
-				currentNode = currentNode->rightChild;
+				currentNode = currentNode->leftChild;
 			}
 			else complete = true;
 		}
@@ -272,28 +274,43 @@ void AVL::_updateBalanceFactors()
 	} while (complete == false);
 }
 
-void AVL::_checkForImbalance(AVL_Node* focusNode)
+void AVL::_checkForImbalance()
 {
+	AVL_Node* focusNode; 
+	focusNode = rootNode; 
+	//start check from rootnode 
 	bool done = false; 
-
-	while (done == false)
+	if ((rootNode->BF >= 2) || (rootNode->BF <= -2))
 	{
-		if (focusNode->BF >= 2)
+		do
 		{
-			//node is out of balance need to figure out what type of rotation to do 
-			//right subtree is too big 
-		}
-		else if (focusNode->BF <= -2)
-		{
-			//need to rebalance the subtrees 
-			//left subtree is too big 
-		}
-		else
-		{
-			//need to select subtree nodes
-
-		}
+			if (focusNode->BF >= 2)
+			{
+				//node is out of balance need to figure out what type of rotation to do 
+				//left Subtree to big 
+				if ((focusNode->leftChild->BF < 2) && (focusNode->leftChild->BF > -2))
+				{
+					//the focusNode now is the highest ancestor where the roatation needs to occur
+					cout << focusNode->key << "\n";
+					done = true; 
+				}
+				else focusNode = focusNode->leftChild;
+			}
+			else if (focusNode->BF <= -2)
+			{
+				//need to rebalance the subtrees 
+				//right subtree to big 
+				if ((focusNode->rightChild->BF < 2) && (focusNode->rightChild->BF > -2))
+				{
+					//the focusNode now is the highest ancestor where the roatation needs to occur
+					cout << focusNode->key << "\n"; 
+					done = true; 
+				}
+				else focusNode = focusNode->rightChild;
+			}
+		} while (done == false); 
 	}
+	std::cout << "Completed Check \n";
 }
 
 int AVL::_calculateBalanceFactor(AVL_Node* tippingNode)
@@ -301,17 +318,16 @@ int AVL::_calculateBalanceFactor(AVL_Node* tippingNode)
 	int rightHeight, leftHeight; 
 	if (tippingNode->rightChild != nullptr)
 	{
-		rightHeight = _getNodeHeight(tippingNode->rightChild);
+		rightHeight = (_getNodeHeight(tippingNode->rightChild) + 1);
 	}
 	else rightHeight = 0; 
 	 
 	if (tippingNode->leftChild != nullptr)
 	{
-		leftHeight = _getNodeHeight(tippingNode->leftChild);
+		leftHeight = (_getNodeHeight(tippingNode->leftChild) + 1);
 	}
 	else leftHeight = 0; 
 	 
-
 	return (leftHeight - rightHeight); 
 }
 
