@@ -11,7 +11,6 @@ AVL::AVL()
 
 void AVL::Insert(char in_key[])
 {
-	AVL_Node* returnedNode; 
 	int insertIndex;
 
 	/*
@@ -23,6 +22,7 @@ void AVL::Insert(char in_key[])
 	*/
 
 	insertIndex = _insert(in_key); 
+	_updateBalanceFactors(); 
 
 }
 
@@ -232,7 +232,7 @@ void AVL::_createRoot(char input[])
 }
 
 
-void AVL::_setNewBalanceFacotrs(AVL_Node* focusNode)
+void AVL::_updateBalanceFactors()
 {
 	//start from the root node and calculate the new balance factors 
 	//look for the BFs that change and set that as focus and work down 
@@ -248,18 +248,25 @@ void AVL::_setNewBalanceFacotrs(AVL_Node* focusNode)
 		if (currentNode->BF < prevBF)
 		{
 			//insert occured in left subtree, follow this down 
-			currentNode = currentNode->leftChild; 
-
+			if (currentNode->leftChild != nullptr)
+			{
+				currentNode = currentNode->leftChild;
+			}
+			else complete = true; 
 		}
 		else if (currentNode->BF > prevBF)
 		{
 			//insert occured in right subtree, follw this down 
-			currentNode = currentNode->rightChild; 
+			if (currentNode->rightChild == nullptr)
+			{
+				currentNode = currentNode->rightChild;
+			}
+			else complete = true;
 		}
 		else
 		{
-			//no change...this really shouldn't happen
-
+			//no change
+			complete = true; 
 		}
 
 	} while (complete == false);
@@ -289,8 +296,6 @@ void AVL::_checkForImbalance(AVL_Node* focusNode)
 	}
 }
 
-
-
 int AVL::_calculateBalanceFactor(AVL_Node* focusNode)
 {
 	int rightHeight, leftHeight; 
@@ -314,7 +319,7 @@ int AVL::_getNodeHeight(AVL_Node* focusNode)
 {
 	int ret1, ret2; 
 	//calculate the height of the node 
-	if (focusNode == nullptr)
+	if ((focusNode->rightChild == nullptr) && (focusNode->leftChild == nullptr))
 	{
 		return 0;
 	}
@@ -324,13 +329,13 @@ int AVL::_getNodeHeight(AVL_Node* focusNode)
 		{
 			ret1 = _calculateBalanceFactor(focusNode->rightChild);
 		}
-		else return 0; 
+		else ret1 = 0; 
 
 		if (focusNode->leftChild != nullptr)
 		{
 			ret2 = _calculateBalanceFactor(focusNode->leftChild);
 		}
-		else return 0; 
+		else ret2 = 0; 
 		
 
 		if (ret1 > ret2)

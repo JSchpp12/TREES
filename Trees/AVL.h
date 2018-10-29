@@ -34,7 +34,7 @@ private:
 	bool _search(char in_key[], bool call_internal, bool call_delete);
 	void _traverse(AVL_Node* in_node);
 
-	void _setNewBalanceFacotrs(AVL_Node* focusNode); 
+	void _updateBalanceFactors(); 
 	int _calculateBalanceFactor(AVL_Node* focusNode); 
 	int _getNodeHeight(AVL_Node* focusNode); 
 	void _checkForImbalance(AVL_Node* focusNode); 
