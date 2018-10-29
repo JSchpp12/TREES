@@ -19,6 +19,7 @@ public:
 	};
 
 	void Insert(char in_key[]); 
+	void HeightOfRoot(); 
 
 private: 
 
@@ -32,11 +33,12 @@ private:
 	void _createRoot(char input[]);
 	bool _search(char in_key[], bool call_internal, bool call_delete);
 	void _traverse(AVL_Node* in_node);
- 
-	void _calculateBalanceFactor(AVL_Node* focusNode); 
+
+	void _setNewBalanceFacotrs(AVL_Node* focusNode); 
+	int _calculateBalanceFactor(AVL_Node* focusNode); 
+	int _getNodeHeight(AVL_Node* focusNode); 
 	void _checkForImbalance(AVL_Node* focusNode); 
 	void RR_rotate();
 	void LL_rotate(); 
-	int _getHeightOfNode(AVL_Node* focusNode); 
+	int _getHeightOfNode(AVL_Node* focusNode);
 };
-

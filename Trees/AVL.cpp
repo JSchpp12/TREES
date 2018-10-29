@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "AVL.h"
 #include <string.h>
+#include <iostream>
+
+using namespace std; 
 
 AVL::AVL()
 {
@@ -9,6 +12,7 @@ AVL::AVL()
 void AVL::Insert(char in_key[])
 {
 	AVL_Node* returnedNode; 
+	int insertIndex;
 
 	/*
 	1. insert new node 
@@ -18,8 +22,13 @@ void AVL::Insert(char in_key[])
 	5. correct with necessar rotation type 
 	*/
 
-	_insert(in_key); 
+	insertIndex = _insert(in_key); 
 
+}
+
+void AVL::HeightOfRoot()
+{
+	std::cout << _calculateBalanceFactor(rootNode); 
 }
 
 int AVL::_insert(char in_key[])
@@ -55,9 +64,14 @@ int AVL::_insert(char in_key[])
 						//this is empty spot
 						AVL_Node newNode;
 						newNode.counter = 1;
+
+						//BF should be 0 since is is a leaf when inserted
+						newNode.BF = 0; 
 						//newNode.keyWeight = _calculateKeyWeight(in_key); 
 						newNode.parent = currentNode;
-
+						newNode.leftChild = nullptr; 
+						newNode.rightChild = nullptr;
+						
 						//set the new node key 
 						strcpy(newNode.key, in_key);
 
@@ -66,6 +80,8 @@ int AVL::_insert(char in_key[])
 						currentNode->rightChild = &nodeStorage[nodeStorage_index];
 						nodeStorage_index++;
 
+						//return the index in node storage where the new node was inserted
+						return (nodeStorage_index - 1); 
 						done = true;
 					}
 					else
@@ -79,15 +95,13 @@ int AVL::_insert(char in_key[])
 				{
 					if (currentNode->leftChild == nullptr)
 					{
-						//this is an empty spot
-						//Node newNode(in_key, currentNode);
-
+						//this is an empty spot 
 						AVL_Node newNode;
-						//copy the key over 
-						newNode.counter = 1;
-						//newNode.keyWeight = _calculateKeyWeight(in_key); 
+						newNode.counter = 1; 
+						newNode.BF = 0; 
 						newNode.parent = currentNode;
-						
+						newNode.leftChild = nullptr; 
+						newNode.rightChild = nullptr; 
 
 						//set the newNode key
 						strcpy(newNode.key, in_key);
@@ -96,6 +110,9 @@ int AVL::_insert(char in_key[])
 						nodeStorage[nodeStorage_index] = newNode;
 						currentNode->leftChild = &nodeStorage[nodeStorage_index];
 						nodeStorage_index++;
+
+						//return the index in node storage where the new node was inserted
+						return (nodeStorage_index - 1); 
 
 						done = true;
 					}
@@ -110,10 +127,11 @@ int AVL::_insert(char in_key[])
 		else
 		{
 			this->_createRoot(in_key);
+
+			//return 0 since it is the root and should be the first node put into the node storage array
+			return 0; 
 		}
 	}
-	//temp ---------------------------------------------
-	return 0; 
 }
 
 bool AVL::_search(char in_key[], bool call_internal, bool call_delete)
@@ -130,6 +148,7 @@ bool AVL::_search(char in_key[], bool call_internal, bool call_delete)
 		currentNode = rootNode;
 		while (done == false)
 		{
+			numOfComparisons++; 
 			if (currentNode)
 			{
 				if (0 == strcmp(currentNode->key, in_key))
@@ -198,19 +217,52 @@ void AVL::_createRoot(char input[])
 	AVL_Node newNode;
 	newNode.counter = 1;
 	newNode.BF = 0; 
+	newNode.leftChild = nullptr; 
+	newNode.rightChild = nullptr; 
+	//might not need this in the end 
+	newNode.parent = nullptr; 
 
+	//copy key over 
 	strcpy(newNode.key, input);
 
 	//store node into memory 
 	nodeStorage[nodeStorage_index] = newNode;
+	rootNode = &nodeStorage[nodeStorage_index]; 
 	nodeStorage_index++;
 }
 
-void AVL::_calculateBalanceFactor(AVL_Node* focusNode)
-{
-	//this should just calculate the balance factor of one node
-	//call from method that will handle which nodes need to be recalculated 
 
+void AVL::_setNewBalanceFacotrs(AVL_Node* focusNode)
+{
+	//start from the root node and calculate the new balance factors 
+	//look for the BFs that change and set that as focus and work down 
+	int prevBF; 
+	bool complete = false;
+	AVL_Node* currentNode; 
+	currentNode = rootNode; 
+
+	do
+	{
+		prevBF = currentNode->BF; 
+		currentNode->BF = _calculateBalanceFactor(currentNode); 
+		if (currentNode->BF < prevBF)
+		{
+			//insert occured in left subtree, follow this down 
+			currentNode = currentNode->leftChild; 
+
+		}
+		else if (currentNode->BF > prevBF)
+		{
+			//insert occured in right subtree, follw this down 
+			currentNode = currentNode->rightChild; 
+		}
+		else
+		{
+			//no change...this really shouldn't happen
+
+		}
+
+	} while (complete == false);
 }
 
 void AVL::_checkForImbalance(AVL_Node* focusNode)
@@ -237,24 +289,57 @@ void AVL::_checkForImbalance(AVL_Node* focusNode)
 	}
 }
 
-int AVL::_getHeightOfNode(AVL_Node* focusNode)
+
+
+int AVL::_calculateBalanceFactor(AVL_Node* focusNode)
 {
+	int rightHeight, leftHeight; 
+	if (focusNode->rightChild != nullptr)
+	{
+		rightHeight = _getNodeHeight(focusNode->rightChild);
+	}
+	else rightHeight = 0; 
+	 
+	if (focusNode->leftChild != nullptr)
+	{
+		leftHeight = _getNodeHeight(focusNode->leftChild);
+	}
+	else leftHeight = 0; 
+	 
+
+	return (leftHeight - rightHeight); 
+}
+
+int AVL::_getNodeHeight(AVL_Node* focusNode)
+{
+	int ret1, ret2; 
+	//calculate the height of the node 
 	if (focusNode == nullptr)
 	{
-		return 0; 
+		return 0;
 	}
 	else
 	{
-		int ret1 = _getHeightOfNode(focusNode->rightChild); 
-		int ret2 = _getHeightOfNode(focusNode->leftChild); 
+		if (focusNode->rightChild != nullptr)
+		{
+			ret1 = _calculateBalanceFactor(focusNode->rightChild);
+		}
+		else return 0; 
+
+		if (focusNode->leftChild != nullptr)
+		{
+			ret2 = _calculateBalanceFactor(focusNode->leftChild);
+		}
+		else return 0; 
 		
+
 		if (ret1 > ret2)
 		{
-			return (ret1 + 1); 
+			return (ret1 + 1);
 		}
 		else
 		{
-			return (ret2 + 1); 
+			return (ret2 + 1);
 		}
 	}
 }
