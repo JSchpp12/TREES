@@ -38,8 +38,9 @@ private:
 	int _calculateBalanceFactor(AVL_Node* focusNode); 
 	int _getNodeHeight(AVL_Node* focusNode); 
 	bool _checkForImbalance(char new_key[]); 
-	void _rotationHandler(AVL_Node* correctionCenter, char new_key[]); 
+	void _rotationHandler(AVL_Node* correctionCenter, AVL_Node* treeConnector, char new_key[]); 
 	void RR_rotate(AVL_Node* correctionCenter);
 	void LL_rotate(); 
 	int _getHeightOfNode(AVL_Node* focusNode);
+	void _clearChildrenPointers(AVL_Node* targetNode); 
 };
