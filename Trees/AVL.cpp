@@ -437,6 +437,23 @@ void AVL::LL_rotate(AVL_Node* correctionCenter)
 	_updateBalanceFactors();
 }
 
+void AVL::LR_rotate(AVL_Node *correctionCenter)
+{
+	if (correctionCenter != rootNode)
+	{
+
+	}
+}
+
+void AVL::RL_rotate(AVL_Node *correctionCenter)
+{
+
+	if (correctionCenter != rootNode)
+	{
+
+	}
+}
+
 int AVL::_calculateBalanceFactor(AVL_Node* tippingNode)
 {
 	int rightHeight, leftHeight; 
