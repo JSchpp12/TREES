@@ -439,6 +439,8 @@ void AVL::LL_rotate(AVL_Node* correctionCenter)
 
 void AVL::LR_rotate(AVL_Node *correctionCenter)
 {
+	//https://www.codingeek.com/data-structure/avl-tree-introduction-to-rotations-and-its-implementation/
+
 	if (correctionCenter != rootNode)
 	{
 
