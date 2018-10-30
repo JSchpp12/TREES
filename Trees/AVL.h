@@ -40,7 +40,7 @@ private:
 	bool _checkForImbalance(char new_key[]); 
 	void _rotationHandler(AVL_Node* correctionCenter, AVL_Node* treeConnector, char new_key[]); 
 	void RR_rotate(AVL_Node* correctionCenter);
-	void LL_rotate(); 
+	void LL_rotate(AVL_Node * correctionCenter); 
 	int _getHeightOfNode(AVL_Node* focusNode);
 	void _clearChildrenPointers(AVL_Node* targetNode); 
 };
