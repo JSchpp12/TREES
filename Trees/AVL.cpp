@@ -380,6 +380,7 @@ void AVL::RR_rotate(AVL_Node* correctionCenter)
 	{
 		//set the middle node as the root of the subtree
 		treeConnector->leftChild = middleOfRotation;
+		//treeConnector->rightChild = middleOfRotation; 
 		middleOfRotation->parent = treeConnector;
 	}
 	else
@@ -395,9 +396,9 @@ void AVL::RR_rotate(AVL_Node* correctionCenter)
 		//tempHolder = middleOfRotation->leftChild; 
 		middleOfRotation->rightChild = middleOfRotation->leftChild;
 	}
-	else
+	else if ((middleOfRotation->leftChild != nullptr) && (middleOfRotation->rightChild != nullptr))
 	{
-		std::cout << "RR rotation error has occured middle node has children on both sides - should not occur \n"; 
+		tempHolder = middleOfRotation->leftChild; 
 	}
 
 	middleOfRotation->leftChild = correctionCenter;
@@ -407,7 +408,12 @@ void AVL::RR_rotate(AVL_Node* correctionCenter)
 	//this node is now a leaf 
 	//correctionCenter->leftChild = nullptr;
 	correctionCenter->rightChild = nullptr;
-	//correctionCenter->BF = 0; 
+
+	if (tempHolder != nullptr)
+	{
+		middleOfRotation->rightChild->leftChild = tempHolder; 
+		tempHolder->parent = middleOfRotation->rightChild; 
+	}
 
 	//rotation should be complete 
 	_updateBalanceFactors(); 
@@ -424,10 +430,12 @@ void AVL::LL_rotate(AVL_Node* correctionCenter)
 	//this node will be the parent of the root of the subtree after rotation
 	treeConnector = correctionCenter->parent; 
 
+	//tell what side of the tree connector the root node is on ------------------------------------------- THIS IS HWERE I AM AT NOW ALKJFELJOFIJ
+
 	if (correctionCenter != rootNode)
 	{
 		//set the middle node as the root of the subtree
-		treeConnector->leftChild = middleOfRotation; 
+		treeConnector->rightChild = middleOfRotation; 
 		middleOfRotation->parent = treeConnector; 
 	}
 	else
@@ -478,11 +486,8 @@ void AVL::LR_rotate(AVL_Node *correctionCenter)
 
 void AVL::RL_rotate(AVL_Node *correctionCenter)
 {
-
-	if (correctionCenter != rootNode)
-	{
-
-	}
+	LL_rotate(correctionCenter->rightChild); 
+	RR_rotate(correctionCenter); 
 }
 
 int AVL::_calculateBalanceFactor(AVL_Node* tippingNode)
