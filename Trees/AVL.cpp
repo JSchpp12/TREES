@@ -27,7 +27,7 @@ void AVL::Insert(char in_key[])
 	std::cout << "rootBF = " << rootNode->BF << "\n"; 
  	correctionNeeded = _checkForImbalance(in_key); 
 
-}
+	}
 
 void AVL::HeightOfRoot()
 {
@@ -353,7 +353,7 @@ void AVL::_rotationHandler(AVL_Node* correctionCenter, AVL_Node* treeConnector, 
 		if (correctionCenter->leftChild->BF == -1)
 		{
 			//insertion was done on the right (LR)
-
+			LR_rotate(correctionCenter); 
 		}
 		else if (correctionCenter->leftChild->BF == 1)
 		{
@@ -440,11 +440,11 @@ void AVL::LL_rotate(AVL_Node* correctionCenter)
 void AVL::LR_rotate(AVL_Node *correctionCenter)
 {
 	//https://www.codingeek.com/data-structure/avl-tree-introduction-to-rotations-and-its-implementation/
+	//apply RR rotation on nodes below correction center 
+	//thenn LL on resulting tree 
 
-	if (correctionCenter != rootNode)
-	{
-
-	}
+	RR_rotate(correctionCenter->leftChild); 
+	LL_rotate(correctionCenter); 
 }
 
 void AVL::RL_rotate(AVL_Node *correctionCenter)
