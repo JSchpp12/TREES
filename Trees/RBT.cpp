@@ -224,65 +224,69 @@ void RBT::_checkForError(int memoryIndex)
 
 	do
 	{
-		if ((insertedNode->parent->color != 2) || (insertedNode != rootNode))
+		if (insertedNode->parent != nullptr)
 		{
-			//set up nodes needed for the cases 
-			parentNode = insertedNode->parent;
-			grandparentNode = parentNode->parent;
-
-			if (parentNode == grandparentNode->rightChild)
+			if ((insertedNode->parent->color != 2) || (insertedNode != rootNode))
 			{
-				uncleNode = grandparentNode->leftChild;
-			}
-			else uncleNode = grandparentNode->rightChild;
+				//set up nodes needed for the cases 
+				parentNode = insertedNode->parent;
+				grandparentNode = parentNode->parent;
 
-			if (uncleNode->color == 1)
-			{
-				//RED -- change color and move up 
-				parentNode->color = 2;
-				uncleNode->color = 2;
-				grandparentNode->color = 1;
-
-				//move the focus up to the grandparent and run again
-				insertedNode = grandparentNode;
-
-			}
-			else
-			{
-				//BLACK
-				//do rotation and then complete 
-				if (parentNode == grandparentNode->leftChild)
+				if (parentNode == grandparentNode->rightChild)
 				{
-					if (insertedNode == parentNode->leftChild)
-					{
-						//Left Left Case 
-						//LL rotate around G
-						//swap colors of g and p 
-						LL_rotate(grandparentNode);
-					}
-					else
-					{
-						//Left Right Case 
+					uncleNode = grandparentNode->leftChild;
+				}
+				else uncleNode = grandparentNode->rightChild;
 
-					}
+				if (uncleNode->color == 1)
+				{
+					//RED -- change color and move up 
+					parentNode->color = 2;
+					uncleNode->color = 2;
+					grandparentNode->color = 1;
+
+					//move the focus up to the grandparent and run again
+					insertedNode = grandparentNode;
+
 				}
 				else
 				{
-					if (insertedNode == parentNode->leftChild)
+					//BLACK
+					//do rotation and then complete 
+					if (parentNode == grandparentNode->leftChild)
 					{
-						//RR case aroung G 
-						RR_rotate(grandparentNode);
+						if (insertedNode == parentNode->leftChild)
+						{
+							//Left Left Case 
+							//LL rotate around G
+							//swap colors of g and p 
+							LL_rotate(grandparentNode);
+						}
+						else
+						{
+							//Left Right Case 
 
+						}
 					}
 					else
 					{
+						if (insertedNode == parentNode->leftChild)
+						{
+							//RR case aroung G 
+							RR_rotate(grandparentNode);
 
+						}
+						else
+						{
+
+						}
 					}
+					complete = true;
 				}
-				complete = true;
 			}
+			else complete = true;
 		}
-		else complete = true;
+		else complete = true; 
 	} while (complete == false);
 	/*
 	if (insertedNode != rootNode)
