@@ -21,10 +21,10 @@
     <ClInclude Include="AVL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RBT.h">
+    <ClInclude Include="BST.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BST.h">
+    <ClInclude Include="RBT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,10 +38,10 @@
     <ClCompile Include="AVL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RBT.cpp">
+    <ClCompile Include="BST.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BST.cpp">
+    <ClCompile Include="RBT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

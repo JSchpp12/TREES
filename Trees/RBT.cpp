@@ -1,17 +1,25 @@
 #include "pch.h"
 #include "RBT.h"
 #include <string.h>
+#include <iostream>
 
 RBT::RBT()
 {
-	RBT_Node newNode; 
-	newNode.color = 2; 
-	t_nil = newNode; 
+	/*
+	RBT_Node newNode;
+	newNode.color = 2;
+	t_nil = newNode;
+	*/
 }
 
 void RBT::Insert(char in_key[])
 {
-	
+	_insert(in_key);
+}
+
+void RBT::print()
+{
+	std::cout << "wow\n";
 }
 
 void RBT::_insert(char in_key[])
@@ -107,7 +115,7 @@ void RBT::_insert(char in_key[])
 		}
 	}
 	//run checks on the nodes for necessary corrections 
-
+	_checkForError(nodeStorage_index--);
 }
 
 bool RBT::_search(char in_key[], bool call_internal, bool call_delete)
@@ -193,9 +201,9 @@ void RBT::_createRoot(char in_key[])
 	newNode.counter = 1;
 
 	strcpy(newNode.key, in_key);
-	
+
 	//root node should be BLACK
-	newNode.color = 2; 
+	newNode.color = 2;
 	newNode.rightChild = nullptr;
 	newNode.leftChild = nullptr;
 
@@ -208,5 +216,223 @@ void RBT::_createRoot(char in_key[])
 
 void RBT::_checkForError(int memoryIndex)
 {
+	//pass in the index newly inserted node in the tree to check the conditions
+	bool complete = false;
 
+	RBT_Node* insertedNode, *parentNode, *uncleNode, *grandparentNode;
+	insertedNode = &nodeStorage[memoryIndex];
+
+	do
+	{
+		if ((insertedNode->parent->color != 2) || (insertedNode != rootNode))
+		{
+			//set up nodes needed for the cases 
+			parentNode = insertedNode->parent;
+			grandparentNode = parentNode->parent;
+
+			if (parentNode == grandparentNode->rightChild)
+			{
+				uncleNode = grandparentNode->leftChild;
+			}
+			else uncleNode = grandparentNode->rightChild;
+
+			if (uncleNode->color == 1)
+			{
+				//RED -- change color and move up 
+				parentNode->color = 2;
+				uncleNode->color = 2;
+				grandparentNode->color = 1;
+
+				//move the focus up to the grandparent and run again
+				insertedNode = grandparentNode;
+
+			}
+			else
+			{
+				//BLACK
+				//do rotation and then complete 
+				if (parentNode == grandparentNode->leftChild)
+				{
+					if (insertedNode == parentNode->leftChild)
+					{
+						//Left Left Case 
+						//LL rotate around G
+						//swap colors of g and p 
+						LL_rotate(grandparentNode);
+					}
+					else
+					{
+						//Left Right Case 
+
+					}
+				}
+				else
+				{
+					if (insertedNode == parentNode->leftChild)
+					{
+						//RR case aroung G 
+						RR_rotate(grandparentNode);
+
+					}
+					else
+					{
+
+					}
+				}
+				complete = true;
+			}
+		}
+		else complete = true;
+	} while (complete == false);
+	/*
+	if (insertedNode != rootNode)
+	{
+		parentNode = insertedNode->parent;
+		if (parentNode->color != 2)
+		{
+			grandparentNode = parentNode->parent;
+
+			if (parentNode == grandparentNode->rightChild)
+			{
+				uncleNode = grandparentNode->leftChild;
+			}
+			else uncleNode = grandparentNode->rightChild;
+
+			if (uncleNode->color == 1)
+			{
+				//Uncle is RED
+				do
+				{
+					parentNode->color = 2;
+					uncleNode->color = 2;
+				} while (complete == false);
+			}
+			else
+			{
+				//Uncle is BLACK
+				//get configuration and use the rotations from AVL
+
+			}
+		}
+	}
+	*/
+}
+
+void RBT::RR_rotate(RBT_Node* correctionCenter)
+{
+	//these names are in regard to describing the orientation before the rotation
+	RBT_Node *middleOfRotation, *treeConnector, *bottomRotation;
+	RBT_Node* tempHolder = nullptr;
+
+	int colorHolder;
+
+	//this node will become the root of the subtree after the rotation
+	middleOfRotation = correctionCenter->rightChild;
+
+	treeConnector = correctionCenter->parent;
+
+	if (correctionCenter != rootNode)
+	{
+		if (correctionCenter == treeConnector->rightChild)
+		{
+			treeConnector->rightChild = middleOfRotation;
+			middleOfRotation->parent = treeConnector;
+		}
+		else
+		{
+			treeConnector->leftChild = middleOfRotation;
+			middleOfRotation->parent = treeConnector;
+		}
+	}
+	else
+	{
+		//rotation is occuring at the root node 
+		rootNode = middleOfRotation;
+		middleOfRotation->parent = nullptr;
+	}
+
+	//set the correctionCenter as the left child of the new root of the subtree
+	if ((middleOfRotation->leftChild != nullptr) && (middleOfRotation->rightChild == nullptr))
+	{
+		//tempHolder = middleOfRotation->leftChild; 
+		middleOfRotation->rightChild = middleOfRotation->leftChild;
+	}
+	else if ((middleOfRotation->leftChild != nullptr) && (middleOfRotation->rightChild != nullptr))
+	{
+		tempHolder = middleOfRotation->leftChild;
+	}
+
+	middleOfRotation->leftChild = correctionCenter;
+	correctionCenter->parent = middleOfRotation;
+
+
+	//this node is now a leaf 
+	//correctionCenter->leftChild = nullptr;
+	correctionCenter->rightChild = nullptr;
+
+	if (tempHolder != nullptr)
+	{
+		middleOfRotation->rightChild->leftChild = tempHolder;
+		tempHolder->parent = middleOfRotation->rightChild;
+	}
+	//rotation should be complete 
+}
+
+void RBT::LL_rotate(RBT_Node* correctionCenter)
+{
+	RBT_Node *middleOfRotation, *treeConnector, *bottomRotation;
+	RBT_Node *tempHolder = nullptr;
+
+	//this node will become the root of the subtree after the rotation
+	middleOfRotation = correctionCenter->leftChild;
+
+	//this node will be the parent of the root of the subtree after rotation
+	treeConnector = correctionCenter->parent;
+
+	if (correctionCenter != rootNode)
+	{
+		//set the middle node as the root of the subtree
+		if (correctionCenter == treeConnector->rightChild)
+		{
+			treeConnector->rightChild = middleOfRotation;
+			middleOfRotation->parent = treeConnector;
+		}
+		else
+		{
+			treeConnector->leftChild = middleOfRotation;
+			middleOfRotation->parent = treeConnector;
+		}
+
+	}
+	else
+	{
+		//rotation is occuring at the root node
+		rootNode = middleOfRotation;
+		middleOfRotation->parent = nullptr;
+	}
+
+	//set the correctionCenter as the right child of the new root of the subtree 
+	if ((middleOfRotation->rightChild != nullptr) && (middleOfRotation->leftChild == nullptr))
+	{
+		middleOfRotation->leftChild = middleOfRotation->rightChild;
+	}
+	else if ((middleOfRotation->rightChild != nullptr) && (middleOfRotation->leftChild != nullptr))
+	{
+		tempHolder = middleOfRotation->rightChild;
+	}
+
+	middleOfRotation->rightChild = correctionCenter;
+	correctionCenter->parent = middleOfRotation;
+
+	if (tempHolder != nullptr)
+	{
+		//moved saved node into position
+		middleOfRotation->leftChild->rightChild = tempHolder;
+		tempHolder->parent = middleOfRotation->leftChild;
+	}
+
+	//this node is now a leaf
+	correctionCenter->leftChild = nullptr;
+
+	//rotation should be complete 
 }
