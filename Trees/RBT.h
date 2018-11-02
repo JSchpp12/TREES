@@ -19,7 +19,7 @@ public:
 	RBT_Node t_nil;
 
 	RBT_Node nodeStorage[10000];
-	int nodeStorage_index = 0;
+	int nodeStorage_index = 0; 
 
 	RBT_Node *rootNode;
 
@@ -32,7 +32,7 @@ private:
 	void _createRoot(char in_key[]);
 	bool _search(char in_key[], bool call_internal, bool call_delete);
 	void _checkForError(int memoryIndex);
-	void RR_rotate(RBT_Node* correctionCenter);
-	void LL_rotate(RBT_Node* correctionCenter);
+	void RR_rotate(RBT_Node* correctionCenter, bool call_multi);
+	void LL_rotate(RBT_Node* correctionCenter, bool call_multi);
 };
 

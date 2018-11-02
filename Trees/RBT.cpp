@@ -50,6 +50,11 @@ void RBT::_insert(char in_key[])
 				{
 					if (currentNode->rightChild == nullptr)
 					{
+						if (nodeStorage_index == 0)
+						{
+							nodeStorage_index++; 
+						}
+
 						//this is empty spot
 						RBT_Node newNode;
 						newNode.counter = 1;
@@ -82,6 +87,11 @@ void RBT::_insert(char in_key[])
 				{
 					if (currentNode->leftChild == nullptr)
 					{
+						if (nodeStorage_index == 0)
+						{
+							nodeStorage_index++;
+						}
+
 						//this is an empty spot
 						//Node newNode(in_key, currentNode);
 
@@ -117,7 +127,8 @@ void RBT::_insert(char in_key[])
 		}
 	}
 	//run checks on the nodes for necessary corrections 
-	_checkForError(nodeStorage_index--);
+	int temp = nodeStorage_index - 1; 
+	_checkForError(temp);
 }
 
 bool RBT::_search(char in_key[], bool call_internal, bool call_delete)
@@ -208,20 +219,25 @@ void RBT::_createRoot(char in_key[])
 	newNode.color = 2;
 	newNode.rightChild = nullptr;
 	newNode.leftChild = nullptr;
+	newNode.parent = nullptr; 
 
 	//store node into memory 
 	nodeStorage[nodeStorage_index] = newNode;
 	rootNode = &nodeStorage[nodeStorage_index];
 
-	nodeStorage_index++;
+	nodeStorage_index++; 
 }
 
 void RBT::_checkForError(int memoryIndex)
 {
 	//pass in the index newly inserted node in the tree to check the conditions
 	bool complete = false;
+	int uncleColor = 0; 
 
 	RBT_Node* insertedNode, *parentNode, *uncleNode, *grandparentNode;
+	uncleNode = nullptr; 
+	grandparentNode = nullptr; 
+
 	insertedNode = &nodeStorage[memoryIndex];
 
 	do
@@ -230,101 +246,89 @@ void RBT::_checkForError(int memoryIndex)
 		{
 			if ((insertedNode->parent->color != 2) || (insertedNode != rootNode))
 			{
-				//set up nodes needed for the cases 
-				parentNode = insertedNode->parent;
-				grandparentNode = parentNode->parent;
-
-				if (parentNode == grandparentNode->rightChild)
+				if (insertedNode != rootNode)
 				{
-					uncleNode = grandparentNode->leftChild;
-				}
-				else uncleNode = grandparentNode->rightChild;
-
-				if (uncleNode->color == 1)
-				{
-					//RED -- change color and move up 
-					parentNode->color = 2;
-					uncleNode->color = 2;
-					grandparentNode->color = 1;
-
-					//move the focus up to the grandparent and run again
-					insertedNode = grandparentNode;
-
-				}
-				else
-				{
-					//BLACK
-					//do rotation and then complete 
-					if (parentNode == grandparentNode->leftChild)
+					//set up nodes needed for the cases 
+					parentNode = insertedNode->parent;
+					grandparentNode = parentNode->parent;
+					if (grandparentNode)
 					{
-						if (insertedNode == parentNode->leftChild)
+						if (parentNode == grandparentNode->rightChild)
 						{
-							//Left Left Case 
-							//LL rotate around G
-							//swap colors of g and p 
-							LL_rotate(grandparentNode);
+							uncleNode = grandparentNode->leftChild;
+							if (uncleNode) uncleColor = uncleNode->color;
+							else uncleColor = 2;
 						}
-						else
-						{
-							//Left Right Case 
+						else uncleColor = grandparentNode->rightChild->color;
+					}
+					else uncleColor = 2;
 
-						}
+					if (uncleColor == 1)
+					{
+						//RED -- change color and move up 
+						parentNode->color = 2;
+						if (uncleNode != nullptr) uncleNode->color = 2;
+						if (grandparentNode) grandparentNode->color = 1;
+
+						//move the focus up to the grandparent and run again
+						insertedNode = grandparentNode;
+
 					}
 					else
 					{
-						if (insertedNode == parentNode->leftChild)
+						//BLACK
+						//do rotation and then complete 
+						if (grandparentNode)
 						{
-							//RR case aroung G 
-							RR_rotate(grandparentNode);
+							if (parentNode == grandparentNode->leftChild)
+							{
+								if (insertedNode == parentNode->leftChild)
+								{
+									//Left Left Case 
+									//LL rotate around G
+									//swap colors of g and p 
+									LL_rotate(grandparentNode, false);
+								}
+								else
+								{
+									//Left Right Case 
+									//left rotate p, then LL case 
+									RR_rotate(parentNode, true);
+									LL_rotate(grandparentNode, false);
+								}
+							}
+							else
+							{
+								if (insertedNode == parentNode->rightChild)
+								{
+									//RR case aroung G 
+									RR_rotate(grandparentNode, false);
 
+								}
+								else
+								{
+									//Right Left Case 
+									LL_rotate(parentNode, true);
+									LL_rotate(grandparentNode, false);
+								}
+							}
+							complete = true;
 						}
-						else
-						{
-
-						}
+						else complete = true;
 					}
-					complete = true;
 				}
+				else if (insertedNode->color == 2) complete = true;
+				else if (insertedNode->color == 1) insertedNode->color = 2;
 			}
-			else complete = true;
+			else if (insertedNode->color == 2) complete = true;
+			else if (insertedNode->color == 1) insertedNode->color = 2;
 		}
-		else complete = true; 
+		else if (insertedNode->color == 2) complete = true;
+		else if (insertedNode->color == 1) insertedNode->color = 2;
 	} while (complete == false);
-	/*
-	if (insertedNode != rootNode)
-	{
-		parentNode = insertedNode->parent;
-		if (parentNode->color != 2)
-		{
-			grandparentNode = parentNode->parent;
-
-			if (parentNode == grandparentNode->rightChild)
-			{
-				uncleNode = grandparentNode->leftChild;
-			}
-			else uncleNode = grandparentNode->rightChild;
-
-			if (uncleNode->color == 1)
-			{
-				//Uncle is RED
-				do
-				{
-					parentNode->color = 2;
-					uncleNode->color = 2;
-				} while (complete == false);
-			}
-			else
-			{
-				//Uncle is BLACK
-				//get configuration and use the rotations from AVL
-
-			}
-		}
-	}
-	*/
 }
 
-void RBT::RR_rotate(RBT_Node* correctionCenter)
+void RBT::RR_rotate(RBT_Node* correctionCenter, bool call_multi)
 {
 	//these names are in regard to describing the orientation before the rotation
 	RBT_Node *middleOfRotation, *treeConnector, *bottomRotation;
@@ -381,13 +385,25 @@ void RBT::RR_rotate(RBT_Node* correctionCenter)
 		middleOfRotation->rightChild->leftChild = tempHolder;
 		tempHolder->parent = middleOfRotation->rightChild;
 	}
+
+	if (call_multi == false)
+	{
+		//swap colors of g and p (correctioncenter and middleofrotation) 
+		colorHolder = correctionCenter->color;
+		correctionCenter->color = middleOfRotation->color;
+		middleOfRotation->color = colorHolder;
+	}
+
 	//rotation should be complete 
+
 }
 
-void RBT::LL_rotate(RBT_Node* correctionCenter)
+void RBT::LL_rotate(RBT_Node* correctionCenter, bool call_multi)
 {
 	RBT_Node *middleOfRotation, *treeConnector, *bottomRotation;
 	RBT_Node *tempHolder = nullptr;
+
+	int colorHolder; 
 
 	//this node will become the root of the subtree after the rotation
 	middleOfRotation = correctionCenter->leftChild;
@@ -440,5 +456,12 @@ void RBT::LL_rotate(RBT_Node* correctionCenter)
 	//this node is now a leaf
 	correctionCenter->leftChild = nullptr;
 
+	if (call_multi == false)
+	{
+		//swap colors of g and p (correctioncenter and middleofrotation) 
+		colorHolder = correctionCenter->color;
+		correctionCenter->color = middleOfRotation->color;
+		middleOfRotation->color = colorHolder;
+	}
 	//rotation should be complete 
 }
