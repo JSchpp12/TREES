@@ -262,7 +262,8 @@ void RBT::_checkForError(int memoryIndex)
 						else
 						{
 							uncleNode = grandparentNode->rightChild;
-							uncleColor = grandparentNode->rightChild->color;
+							if (uncleNode) uncleColor = uncleNode->rightChild->color;
+							else uncleColor = 2; 
 						}
 					}
 					else uncleColor = 2;
@@ -313,7 +314,7 @@ void RBT::_checkForError(int memoryIndex)
 								{
 									//Right Left Case 
 									LL_rotate(parentNode, true);
-									LL_rotate(grandparentNode, false);
+									RR_rotate(grandparentNode, false);
 								}
 							}
 							complete = true;
@@ -406,13 +407,14 @@ void RBT::LL_rotate(RBT_Node* correctionCenter, bool call_multi)
 	RBT_Node *middleOfRotation, *treeConnector, *bottomRotation;
 	RBT_Node *tempHolder = nullptr;
 
-	int colorHolder; 
+	int colorHolder;
 
 	//this node will become the root of the subtree after the rotation
 	middleOfRotation = correctionCenter->leftChild;
 
 	//this node will be the parent of the root of the subtree after rotation
 	treeConnector = correctionCenter->parent;
+
 
 	if (correctionCenter != rootNode)
 	{
@@ -466,5 +468,6 @@ void RBT::LL_rotate(RBT_Node* correctionCenter, bool call_multi)
 		correctionCenter->color = middleOfRotation->color;
 		middleOfRotation->color = colorHolder;
 	}
-	//rotation should be complete 
 }
+	//rotation should be complete 
+
