@@ -244,9 +244,9 @@ void RBT::_checkForError(int memoryIndex)
 	{
 		if (insertedNode->parent != nullptr)
 		{
-			if ((insertedNode->parent->color != 2) || (insertedNode != rootNode))
+			if (insertedNode != rootNode)
 			{
-				if (insertedNode != rootNode)
+				if (insertedNode->parent->color != 2)
 				{
 					//set up nodes needed for the cases 
 					parentNode = insertedNode->parent;
@@ -259,7 +259,11 @@ void RBT::_checkForError(int memoryIndex)
 							if (uncleNode) uncleColor = uncleNode->color;
 							else uncleColor = 2;
 						}
-						else uncleColor = grandparentNode->rightChild->color;
+						else
+						{
+							uncleNode = grandparentNode->rightChild;
+							uncleColor = grandparentNode->rightChild->color;
+						}
 					}
 					else uncleColor = 2;
 
@@ -317,8 +321,7 @@ void RBT::_checkForError(int memoryIndex)
 						else complete = true;
 					}
 				}
-				else if (insertedNode->color == 2) complete = true;
-				else if (insertedNode->color == 1) insertedNode->color = 2;
+				else complete = true;
 			}
 			else if (insertedNode->color == 2) complete = true;
 			else if (insertedNode->color == 1) insertedNode->color = 2;
