@@ -86,7 +86,7 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 			//remove this if the most negative node is changed to null
 			strcmp(nextMaxNode.key, bottomLeftNode->key); 
 
-			//set the level of the new node big tits and small niggas
+			//set the level of the new node
 			nextMaxNode.level = level; 
 
 			nextMaxNode.downNode = leftNodes[lowerLevel]; 
