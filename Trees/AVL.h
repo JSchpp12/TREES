@@ -3,6 +3,8 @@ class AVL
 {
 public:
 	int numOfComparisons = 0; 
+	int numOfPointerChanges = 0; 
+	int numOfBFChanges = 0; 
 
 	AVL();
 	struct AVL_Node

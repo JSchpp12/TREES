@@ -14,6 +14,10 @@ public:
 		int level; 
 	};
 
+	//counters for analysis 
+	int numOfCopies = 0;
+	int numOfPointerChange = 0; 
+
 	int NumOflevels = 0;
 
 	//count of number of comparisons made when inserting 

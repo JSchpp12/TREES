@@ -174,7 +174,8 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 	//the following will create and link copy nodes above the new node 
 	while (_random() == true)
 	{
-		std::cout << "Making copy \n"; 
+		numOfCopies++;
+
 		skipNode upNode; 
 		skipNode *leaderNode = nullptr; 
 		skipNode *laggerNode = nullptr; 
@@ -202,9 +203,10 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 			
 			nodeStorage[nodeStorage_index] = nextMaxNode; 
 			
-			//died here ----
 			leftNodes[lowerLevel]->upNode = &nodeStorage[nodeStorage_index];
 			nodeStorage[nodeStorage_index].downNode = leftNodes[lowerLevel];
+			numOfPointerChange = numOfPointerChange + 2; 
+
 			leftNodes[level] = &nodeStorage[nodeStorage_index]; 
 			topLeftNode = leftNodes[level]; 
 			nodeStorage_index++; 
@@ -232,28 +234,24 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 			}
 		}
 
-		//look for where upper level copy will go in list
-		/*
-		while (strcmp(in_key, leaderNode->key) > 0)
-		{
-			laggerNode = leaderNode; 
-			leaderNode = leaderNode->rightNode; 
-		}
-		*/ 
-		//when this while exits, the laggerNode will contain the left node, and the leftSearchNode will be the right node
-		
 		upNode.level = level; 
 		strcpy(upNode.key, in_key);
 		if (laggerNode != nullptr) upNode.leftNode = laggerNode; 
 		else upNode.leftNode = leftNodes[level]; 
+		numOfPointerChange++; 
 
-		if (leaderNode != nullptr) upNode.rightNode = leaderNode;
+		if (leaderNode != nullptr)
+		{
+			numOfPointerChange++; 
+			upNode.rightNode = leaderNode;
+		}
 		else upNode.rightNode = nullptr; 
 
 		upNode.upNode = nullptr; 
 
 		if (highestCopy != nullptr) upNode.downNode = highestCopy;
 		else upNode.downNode = newNodePointer; 
+		numOfPointerChange++; 
 
 		nodeStorage[nodeStorage_index] = upNode;
 
@@ -263,9 +261,11 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 		if (nodeStorage[nodeStorage_index].rightNode != nullptr)
 		{
 			nodeStorage[nodeStorage_index].rightNode->leftNode = &nodeStorage[nodeStorage_index];
+			numOfPointerChange++; 
 		}
 		//left node should never be null pointer, dont need to worry about it 
 		nodeStorage[nodeStorage_index].leftNode->rightNode = &nodeStorage[nodeStorage_index]; 
+		numOfPointerChange++; 
 
 		highestCopy = &nodeStorage[nodeStorage_index]; 
 		nodeStorage_index++; 

@@ -272,12 +272,21 @@ void RBT::_checkForError(int memoryIndex)
 					{
 						//RED -- change color and move up 
 						parentNode->color = 2;
-						if (uncleNode != nullptr) uncleNode->color = 2;
-						if (grandparentNode) grandparentNode->color = 1;
+						numOfReColor++; 
+						if (uncleNode != nullptr)
+						{
+							uncleNode->color = 2;
+							numOfReColor++; 
+						}
+
+						if (grandparentNode)
+						{
+							grandparentNode->color = 1;
+							numOfReColor++; 
+						}
 
 						//move the focus up to the grandparent and run again
 						insertedNode = grandparentNode;
-
 					}
 					else
 					{
@@ -325,15 +334,26 @@ void RBT::_checkForError(int memoryIndex)
 				else complete = true;
 			}
 			else if (insertedNode->color == 2) complete = true;
-			else if (insertedNode->color == 1) insertedNode->color = 2;
+			else if (insertedNode->color == 1)
+			{
+				insertedNode->color = 2;
+				numOfReColor++; 
+			}
+
 		}
 		else if (insertedNode->color == 2) complete = true;
-		else if (insertedNode->color == 1) insertedNode->color = 2;
+		else if (insertedNode->color == 1)
+		{
+			insertedNode->color = 2;
+			numOfReColor++; 
+		}
+
 	} while (complete == false);
 }
 
 void RBT::RR_rotate(RBT_Node* correctionCenter, bool call_multi)
 {
+	numOfRotations++; 
 	//these names are in regard to describing the orientation before the rotation
 	RBT_Node *middleOfRotation, *treeConnector, *bottomRotation;
 	RBT_Node* tempHolder = nullptr;
@@ -404,6 +424,8 @@ void RBT::RR_rotate(RBT_Node* correctionCenter, bool call_multi)
 
 void RBT::LL_rotate(RBT_Node* correctionCenter, bool call_multi)
 {
+	numOfRotations++; 
+
 	RBT_Node *middleOfRotation, *treeConnector, *bottomRotation;
 	RBT_Node *tempHolder = nullptr;
 

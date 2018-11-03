@@ -16,6 +16,9 @@ public:
 		RBT_Node* leftChild, *rightChild, *parent;
 	};
 
+	int numOfRotations = 0;
+	int numOfReColor = 0; 
+
 	RBT_Node t_nil;
 
 	RBT_Node nodeStorage[10000];

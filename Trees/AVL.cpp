@@ -248,6 +248,7 @@ void AVL::_updateBalanceFactors()
 	{
 		prevBF = currentNode->BF; 
 		currentNode->BF = _calculateBalanceFactor(currentNode); 
+		numOfBFChanges++; 
 		if (currentNode->BF < prevBF)
 		{
 			//insert occured in right subtree, follow this down 
@@ -376,47 +377,22 @@ void AVL::RR_rotate(AVL_Node* correctionCenter)
 	//this node will be the parent of the root of the subtree after rotation -- will be right child of the treeConnector 
 	
 	treeConnector = correctionCenter->parent;
-	/*
-	if (treeConnector->rightChild == correctionCenter)
-	{
-		if (correctionCenter != rootNode)
-		{
-			//set the middle node as the root of the subtree
-			treeConnector->rightChild = middleOfRotation;
-			middleOfRotation->parent = treeConnector;
-		}
-		else
-		{
-			//rotation is occuring at the root node
-			rootNode = middleOfRotation;
-			middleOfRotation->parent = nullptr;
-		}
-	}
-	else if (treeConnector->leftChild == correctionCenter)
-	{
-		if (correctionCenter != rootNode)
-		{
-			treeConnector->leftChild = middleOfRotation;
-			middleOfRotation->parent = treeConnector;
-		}
-		else
-		{
-			rootNode = middleOfRotation;
-			middleOfRotation->parent = treeConnector;
-		}
-	}
-	*/
+
 	if (correctionCenter != rootNode)
 	{
 		if (correctionCenter == treeConnector->rightChild)
 		{
 			treeConnector->rightChild = middleOfRotation;
 			middleOfRotation->parent = treeConnector;
+			//increment counter 
+			numOfPointerChanges = numOfPointerChanges + 2; 
 		}
 		else
 		{
 			treeConnector->leftChild = middleOfRotation;
 			middleOfRotation->parent = treeConnector;
+			//increment counter 
+			numOfPointerChanges = numOfPointerChanges + 2;
 		}
 	}
 	else
@@ -431,6 +407,7 @@ void AVL::RR_rotate(AVL_Node* correctionCenter)
 	{
 		//tempHolder = middleOfRotation->leftChild; 
 		middleOfRotation->rightChild = middleOfRotation->leftChild;
+		numOfPointerChanges++; 
 	}
 	else if ((middleOfRotation->leftChild != nullptr) && (middleOfRotation->rightChild != nullptr))
 	{
@@ -439,16 +416,18 @@ void AVL::RR_rotate(AVL_Node* correctionCenter)
 
 	middleOfRotation->leftChild = correctionCenter;
 	correctionCenter->parent = middleOfRotation;
-
+	numOfPointerChanges = numOfPointerChanges + 2;
 
 	//this node is now a leaf 
 	//correctionCenter->leftChild = nullptr;
 	correctionCenter->rightChild = nullptr;
+	numOfPointerChanges++; 
 
 	if (tempHolder != nullptr)
 	{
 		middleOfRotation->rightChild->leftChild = tempHolder; 
 		tempHolder->parent = middleOfRotation->rightChild; 
+		numOfPointerChanges++; 
 	}
 	//rotation should be complete 
 	_updateBalanceFactors(); 
@@ -456,38 +435,6 @@ void AVL::RR_rotate(AVL_Node* correctionCenter)
 
 void AVL::LL_rotate(AVL_Node* correctionCenter)
 {
-	//tell what side of the tree connector the root node is on -------------------------------------------
-	/*
-	if (treeConnector->rightChild == correctionCenter)
-	{
-		if (correctionCenter != rootNode)
-		{
-			//set the middle node as the root of the subtree
-			treeConnector->rightChild = middleOfRotation;
-			middleOfRotation->parent = treeConnector;
-		}
-		else
-		{
-			//rotation is occuring at the root node
-			rootNode = middleOfRotation;
-			middleOfRotation->parent = nullptr;
-		}
-	}
-	else if (treeConnector->leftChild == correctionCenter)
-	{
-		if (correctionCenter != rootNode)
-		{
-			treeConnector->leftChild = middleOfRotation; 
-			middleOfRotation->parent = treeConnector; 
-		}
-		else
-		{
-			rootNode = middleOfRotation; 
-			middleOfRotation->parent = treeConnector; 
-		}
-	}
-	*/ 
-
 	AVL_Node *middleOfRotation, *treeConnector, *bottomRotation;
 	AVL_Node *tempHolder = nullptr;
 
@@ -497,8 +444,6 @@ void AVL::LL_rotate(AVL_Node* correctionCenter)
 	//this node will be the parent of the root of the subtree after rotation
 	treeConnector = correctionCenter->parent;
 
-	//tell what side of the tree connector the root node is on ------------------------------------------- THIS IS HWERE I AM AT NOW ALKJFELJOFIJ
-
 	if (correctionCenter != rootNode)
 	{
 		//set the middle node as the root of the subtree
@@ -506,25 +451,28 @@ void AVL::LL_rotate(AVL_Node* correctionCenter)
 		{
 			treeConnector->rightChild = middleOfRotation;
 			middleOfRotation->parent = treeConnector;
+			numOfPointerChanges = numOfPointerChanges + 2;
 		}
 		else
 		{
 			treeConnector->leftChild = middleOfRotation;
 			middleOfRotation->parent = treeConnector;
+			numOfPointerChanges = numOfPointerChanges + 2;
 		}
-		
 	}
 	else
 	{
 		//rotation is occuring at the root node
 		rootNode = middleOfRotation;
 		middleOfRotation->parent = nullptr;
+		numOfPointerChanges = numOfPointerChanges + 2;
 	}
 
 	//set the correctionCenter as the right child of the new root of the subtree 
 	if ((middleOfRotation->rightChild != nullptr) && (middleOfRotation->leftChild == nullptr))
 	{
 		middleOfRotation->leftChild = middleOfRotation->rightChild;
+		numOfPointerChanges++; 
 	}
 	else if ((middleOfRotation->rightChild != nullptr) && (middleOfRotation->leftChild != nullptr))
 	{
@@ -533,12 +481,14 @@ void AVL::LL_rotate(AVL_Node* correctionCenter)
 
 	middleOfRotation->rightChild = correctionCenter;
 	correctionCenter->parent = middleOfRotation;
+	numOfPointerChanges = numOfPointerChanges + 2;
 
 	if (tempHolder != nullptr)
 	{
 		//moved saved node into position
 		middleOfRotation->leftChild->rightChild = tempHolder;
 		tempHolder->parent = middleOfRotation->leftChild;
+		numOfPointerChanges = numOfPointerChanges + 2;
 	}
 
 	//this node is now a leaf
