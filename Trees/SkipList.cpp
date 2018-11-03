@@ -58,15 +58,15 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 	newNode.leftNode = leftNode; 
 	newNode.rightNode = rightNode; 
 
+	strcpy(newNode.key, in_key); 
+
+	//store new node in memory 
 	nodeStorage[nodeStorage_index] = newNode; 
 	newNodePointer = &nodeStorage[nodeStorage_index]; 
-
 	nodeStorage_index++; 
-
 	
 	//copy the key over 
 	strcpy(newNode.key, in_key);
-
 
 	//the following will create and link copy nodes above the new node 
 	while (_random() == true)
@@ -86,7 +86,7 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 			//remove this if the most negative node is changed to null
 			strcmp(nextMaxNode.key, bottomLeftNode->key); 
 
-			//set the level of the new node 
+			//set the level of the new node big tits and small niggas
 			nextMaxNode.level = level; 
 
 			nextMaxNode.downNode = leftNodes[lowerLevel]; 
