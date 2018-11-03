@@ -38,9 +38,9 @@ void SkipList::Insert(char in_key[])
 	_insert(in_key); 
 }
 
-void SkipList::List()
+int SkipList::List()
 {
-	_traverse(); 
+	return _traverse(); 
 }
 
 void SkipList::_insert(char in_key[])
@@ -100,46 +100,6 @@ void SkipList::_insert(char in_key[])
 			break;
 		}
 	}
-
-	//browse express lane to find path down
-	/*
-	while (searchNode->level != 0)
-	{
-		while (strcmp(in_key, searchNode->key) < 0)
-		{
-			numOfComparisons++;
-			if (searchNode->rightNode != nullptr) searchNode = searchNode->rightNode;
-			else searchNode = searchNode->downNode; 
-		}
-	}
-
-	leaderNode = searchNode; 
-	laggerNode = searchNode; 
-	//search bottom layer for the new node's place 
-	while (strcmp(in_key, leaderNode->key) > 0 )
-	{
-		numOfComparisons++; 
-
-		if (leaderNode->rightNode != nullptr)
-		{
-			laggerNode = leaderNode;
-			leaderNode = leaderNode->rightNode;
-		}
-		else if (strcmp(in_key, leaderNode->key) == 0)
-		{
-			_increaseCounters(leaderNode);
-			makeNewNode = false; 
-		}
-		else
-		{
-			//reached end of the list 
-			laggerNode = leaderNode; 
-			leaderNode = nullptr; 
-			break; 
-		}
-	}
-	 */ 
-	//will exit when the in_key is larger than the next node in the list 
 
 	if (makeNewNode == true) _createNewNode(laggerNode, leaderNode, in_key); 
 }
@@ -283,8 +243,9 @@ bool SkipList::_random()
 	return result; 
 }
 
-void SkipList::_traverse()
+int SkipList::_traverse()
 {
+	int numOfItems = 0; 
 	skipNode *currentNode, *farLeftNode; 
 	char empty[50]; 
 	
@@ -299,13 +260,18 @@ void SkipList::_traverse()
 
 			while (currentNode!= nullptr)
 			{
-				if (currentNode != leftNodes[i]) std::cout << currentNode->key << " , ";
+				if (currentNode != leftNodes[i])
+				{
+					numOfItems++; 
+					std::cout << currentNode->key << " , ";
+				}
 				currentNode = currentNode->rightNode;
 			} 
 			std::cout << "\n"; 
 		}
 	}
 	else std::cout << "Empty"; 
+	return numOfItems; 
 }
 
 void SkipList::_increaseCounters(skipNode *targetNode)

@@ -9,6 +9,7 @@ public:
 
 	//will count the number of comparisons
 	int numOfComparisons = 0; 
+	int numOfItems = 0; 
 
 	struct Node
 	{

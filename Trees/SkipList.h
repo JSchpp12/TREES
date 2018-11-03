@@ -17,6 +17,7 @@ public:
 	//counters for analysis 
 	int numOfCopies = 0;
 	int numOfPointerChange = 0; 
+	
 
 	int NumOflevels = 0;
 
@@ -32,13 +33,13 @@ public:
 	skipNode* leftNodes[300]; 
 
 	void Insert(char in_key[]); 
-	void List(); 
+	int List(); 
 
 private:
 	void _insert(char in_key[]); 
 	bool _random(); 
 	void _createNewNode(skipNode *leftNode, skipNode *rightNode, char in_key[]); 
-	void _traverse(); 
+	int _traverse(); 
 	void _increaseCounters(skipNode *targetNode); 
 	
 };

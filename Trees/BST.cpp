@@ -203,6 +203,7 @@ void BST::_traverse(Node* in_node)
 {
 	if (in_node != nullptr)
 	{
+		numOfItems = numOfItems + in_node->counter;
 		_traverse(in_node->leftChild);
 		std::cout << in_node->key << " " << in_node->counter << "\n";
 		_traverse(in_node->rightChild);
