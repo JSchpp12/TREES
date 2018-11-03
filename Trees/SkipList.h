@@ -23,7 +23,7 @@ public:
 	float p; 
 
 	skipNode* headerNode;
-	skipNode* leftNodes[100]; 
+	skipNode* leftNodes[300]; 
 
 	void Insert(char in_key[]); 
 
@@ -31,5 +31,6 @@ private:
 	void _insert(char in_key[]); 
 	bool _random(); 
 	void _createNewNode(skipNode *leftNode, skipNode *rightNode, char in_key[]); 
+	
 };
 
