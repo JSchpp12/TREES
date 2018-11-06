@@ -11,23 +11,34 @@ AVL::AVL()
 
 void AVL::Insert(char in_key[])
 {
+	std::cout << "AVL insert \n"; 
 	int insertIndex;
-	bool correctionNeeded; 
+	bool correctionNeeded;
 
 	/*
-	1. insert new node 
-	2. calculate new BFs 
+	1. insert new node
+	2. calculate new BFs
 	3. check for a BF that is out of spec
 	4. figure out what type of rotation is needed
-	5. correct with necessary rotation type 
+	5. correct with necessary rotation type
 	*/
 
-	insertIndex = _insert(in_key); 
-	_updateBalanceFactors(); 
-	std::cout << "rootBF = " << rootNode->BF << "\n"; 
- 	correctionNeeded = _checkForImbalance(in_key); 
+	insertIndex = _insert(in_key);
+	_updateBalanceFactors();
+	std::cout << "rootBF = " << rootNode->BF << "\n";
+	correctionNeeded = _checkForImbalance(in_key);
 
-	}
+}
+
+void AVL::GetTreeInfo()
+{
+	_traverse(rootNode); 
+	std::cout << "AVL Tree Info... \n"; 
+	std::cout << "Number of Comparisons: " << numOfComparisons << "\n"; 
+	std::cout << "Number of Pointer Changes: " << numOfPointerChanges << "\n"; 
+	std::cout << "Number of Balance Factor Changes: " << numOfBFChanges << "\n"; 
+	std::cout << "Number of Items: " << numOfItems << "\n";
+}
 
 void AVL::HeightOfRoot()
 {
@@ -124,6 +135,11 @@ int AVL::_insert(char in_key[])
 						//need to keep looking for empty spot
 						currentNode = currentNode->leftChild;
 					}
+				}
+				else
+				{
+					currentNode->counter++; 
+					done = true; 
 				}
 			}
 		}
@@ -502,7 +518,6 @@ void AVL::LL_rotate(AVL_Node* correctionCenter)
 
 void AVL::LR_rotate(AVL_Node *correctionCenter)
 {
-	//https://www.codingeek.com/data-structure/avl-tree-introduction-to-rotations-and-its-implementation/
 	//apply RR rotation on nodes below correction center 
 	//thenn LL on resulting tree 
 
@@ -571,4 +586,19 @@ void AVL::_clearChildrenPointers(AVL_Node* targetNode)
 {
 	targetNode->rightChild = nullptr; 
 	targetNode->leftChild = nullptr; 
+}
+
+void AVL::_traverse(AVL_Node* in_node)
+{
+	if (in_node != nullptr)
+	{
+		numOfItems = numOfItems + in_node->counter;
+		_traverse(in_node->leftChild);
+		//std::cout << in_node->key << " " << in_node->counter << "\n";
+		_traverse(in_node->rightChild);
+	}
+	else
+	{
+		return;
+	}
 }

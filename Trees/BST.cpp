@@ -10,8 +10,17 @@ void BST::List()
 	_traverse(rootNode); 
 }
 
+void BST::GetTreeInfo()
+{
+	_traverse(rootNode); 
+	std::cout << "Binary Search Tree Info...\n"; 
+	std::cout << "Number of Comparisons: " << numOfComparisons << "\n"; 
+	std::cout << "Number of Items: " << numOfItems << "\n"; 
+}
+
 void BST::Insert(char in_key[])
 {
+	std::cout << "Binar tree insert"; 
 	int in_weight = 0; 
 	bool cont = false;
 	bool done = false;

@@ -35,12 +35,23 @@ SkipList::SkipList()
 
 void SkipList::Insert(char in_key[])
 {
+	std::cout << "skip list insert \n"; 
 	_insert(in_key); 
 }
 
 int SkipList::List()
 {
 	return _traverse(); 
+}
+
+void SkipList::GetInfo()
+{
+	_traverse(); 
+	std::cout << "Skip List Info...\n"; 
+	std::cout << "Number of Items: " << _traverse() << "\n"; 
+	std::cout << "Number of Nodes in List: " << nodeStorage_index << "\n"; 
+	std::cout << "Number of Pointer Changes: " << numOfPointerChange << "\n"; 
+	std::cout << "Number of Comparisons: " << numOfComparisons << "\n"; 
 }
 
 void SkipList::_insert(char in_key[])

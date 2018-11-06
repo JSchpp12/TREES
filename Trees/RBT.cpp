@@ -3,8 +3,6 @@
 #include <string.h>
 #include <iostream>
 
-//https://www.geeksforgeeks.org/red-black-tree-set-2-insert/
-
 RBT::RBT()
 {
 	/*
@@ -16,12 +14,17 @@ RBT::RBT()
 
 void RBT::Insert(char in_key[])
 {
+	std::cout << "RBT insert \n"; 
 	_insert(in_key);
 }
 
-void RBT::print()
+void RBT::GetTreeInfo()
 {
-	std::cout << "wow\n";
+	_traverse(rootNode); 
+	std::cout << "Red Black Tree Info...\n"; 
+	std::cout << "Number of Comparisons: " << numOfComparisons << "\n"; 
+	std::cout << "Number of Rotations: " << numOfRotations << "\n"; 
+	std::cout << "Number of Re-colorings: " << numOfReColor << "\n"; 
 }
 
 void RBT::_insert(char in_key[])
@@ -119,6 +122,11 @@ void RBT::_insert(char in_key[])
 						currentNode = currentNode->leftChild;
 					}
 				}
+				else
+				{
+					currentNode->counter++;
+					done = true; 
+				}
 			}
 		}
 		else
@@ -200,6 +208,11 @@ bool RBT::_search(char in_key[], bool call_internal, bool call_delete)
 						found = false;
 					}
 				}
+				else
+				{
+					currentNode->counter++; 
+					done = true; 
+				}
 			}
 		}
 	}
@@ -262,7 +275,8 @@ void RBT::_checkForError(int memoryIndex)
 						else
 						{
 							uncleNode = grandparentNode->rightChild;
-							if (uncleNode) uncleColor = uncleNode->rightChild->color;
+							//if (uncleNode->rightChild) uncleColor = uncleNode->rightChild->color;
+							if (uncleNode) uncleColor = uncleNode->color; 
 							else uncleColor = 2; 
 						}
 					}
@@ -490,6 +504,20 @@ void RBT::LL_rotate(RBT_Node* correctionCenter, bool call_multi)
 		correctionCenter->color = middleOfRotation->color;
 		middleOfRotation->color = colorHolder;
 	}
-}
 	//rotation should be complete 
+}
 
+void RBT::_traverse(RBT_Node* in_node)
+{
+	if (in_node != nullptr)
+	{
+		numOfItems = numOfItems + in_node->counter;
+		_traverse(in_node->leftChild);
+		std::cout << in_node->key << " " << in_node->counter << "\n";
+		_traverse(in_node->rightChild);
+	}
+	else
+	{
+		return;
+	}
+}

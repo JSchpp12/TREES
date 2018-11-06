@@ -5,6 +5,7 @@ public:
 	int numOfComparisons = 0; 
 	int numOfPointerChanges = 0; 
 	int numOfBFChanges = 0; 
+	int numOfItems = 0; 
 
 	AVL();
 	struct AVL_Node
@@ -22,6 +23,7 @@ public:
 
 	void Insert(char in_key[]); 
 	void HeightOfRoot(); 
+	void GetTreeInfo();
 
 private: 
 

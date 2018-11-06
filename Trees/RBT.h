@@ -18,17 +18,18 @@ public:
 
 	int numOfRotations = 0;
 	int numOfReColor = 0; 
+	int numOfItems = 0; 
 
 	RBT_Node t_nil;
 
-	RBT_Node nodeStorage[10000];
+	RBT_Node nodeStorage[1000];
 	int nodeStorage_index = 0; 
 
 	RBT_Node *rootNode;
 
 	int numOfComparisons = 0;
 	void Insert(char new_key[]);
-	void print();
+	void GetTreeInfo();
 
 private:
 	void _insert(char in_key[]);
@@ -37,5 +38,6 @@ private:
 	void _checkForError(int memoryIndex);
 	void RR_rotate(RBT_Node* correctionCenter, bool call_multi);
 	void LL_rotate(RBT_Node* correctionCenter, bool call_multi);
+	void _traverse(RBT_Node* in_node); 
 };
 

@@ -23,6 +23,7 @@ public:
 
 	void Insert(char in_key[]);
 	void List(); 
+	void GetTreeInfo(); 
 	//void Search(char in_key[]);
 
 private: 

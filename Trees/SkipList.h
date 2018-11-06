@@ -18,7 +18,6 @@ public:
 	int numOfCopies = 0;
 	int numOfPointerChange = 0; 
 	
-
 	int NumOflevels = 0;
 
 	//count of number of comparisons made when inserting 
@@ -34,6 +33,7 @@ public:
 
 	void Insert(char in_key[]); 
 	int List(); 
+	void GetInfo(); 
 
 private:
 	void _insert(char in_key[]); 
