@@ -26,7 +26,7 @@ public:
 
 	skipNode *bottomLeftNode, *topLeftNode; 
 
-	skipNode nodeStorage[10000]; 
+	skipNode nodeStorage[1000]; 
 	int nodeStorage_index = 0; 
 
 	skipNode* headerNode;

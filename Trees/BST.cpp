@@ -90,7 +90,13 @@ void BST::Insert(char in_key[])
 						currentNode = currentNode->leftChild;
 					}
 				}
+				else
+				{
+					currentNode->counter++;
+					done = true; 
+				}
 			}
+		
 		}
 		else
 		{

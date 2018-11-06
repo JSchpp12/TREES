@@ -25,7 +25,7 @@ public:
 
 private: 
 
-	AVL_Node nodeStorage[10000]; 
+	AVL_Node nodeStorage[1000]; 
 
 	AVL_Node* currentFocus;
 	AVL_Node* rootNode;

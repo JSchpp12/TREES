@@ -18,7 +18,7 @@ public:
 		Node* parent; 
 		char key[50]; 
 		int lengthOfChar = 0;  
-		int counter; 
+		int counter = 0; 
 	};
 
 	void Insert(char in_key[]);
@@ -27,7 +27,7 @@ public:
 
 private: 
 	Node* currentFocus; 
-	Node nodeStorage[100]; 
+	Node nodeStorage[1000]; 
 	Node* rootNode; 
 	int nodeStorage_index = 0; 
 
