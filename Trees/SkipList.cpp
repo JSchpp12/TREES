@@ -187,6 +187,7 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 
 		leaderNode = leftNodes[level]; 
 		
+		//find place in height where the new copy should go -- get left and right pointers for new node
 		while (strcmp(in_key, leaderNode->key) > 0)
 		{
 			numOfComparisons++; 
