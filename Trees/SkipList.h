@@ -1,4 +1,10 @@
 #pragma once
+//SkipList.h
+//Jacob Schaupp
+//EECS 2510, Fall 2018
+//11/7/2018
+//Contains the header information for the skiplist class
+
 class SkipList
 {
 public:
@@ -6,10 +12,8 @@ public:
 	struct skipNode
 	{
 		char key[50]; 
-		int counter; 
+		int counter = 0; 
 		skipNode *rightNode, *leftNode, *upNode, *downNode;
-		
-
 		//this will represent what level this node is on 
 		int level; 
 	};
@@ -25,11 +29,11 @@ public:
 
 	skipNode *bottomLeftNode, *topLeftNode; 
 
-	skipNode nodeStorage[1000]; 
+	skipNode nodeStorage[50000]; 
 	int nodeStorage_index = 0; 
 
-	skipNode* headerNode;
-	skipNode* leftNodes[300]; 
+	skipNode *headerNode;
+	skipNode *leftNodes[300]; 
 
 	void Insert(char in_key[]); 
 	int List(); 

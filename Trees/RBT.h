@@ -1,4 +1,10 @@
 #pragma once
+//RBT.h
+//Jacob Schaupp
+//EECS 2510, Fall 2018
+//11/7/2018
+//Contains the header information for the RBT class 
+
 class RBT
 {
 public:
@@ -22,7 +28,7 @@ public:
 
 	RBT_Node t_nil;
 
-	RBT_Node nodeStorage[1000];
+	RBT_Node nodeStorage[50000];
 	int nodeStorage_index = 0; 
 
 	RBT_Node *rootNode;

@@ -1,4 +1,10 @@
 #pragma once
+//AVL.h
+//Jacob Schaupp
+//EECS 2510, Fall 2018
+//11/7/2018
+//Contains the header information for the AVL class 
+
 class AVL
 {
 public:
@@ -27,7 +33,7 @@ public:
 
 private: 
 
-	AVL_Node nodeStorage[1000]; 
+	AVL_Node nodeStorage[50000]; 
 
 	AVL_Node* currentFocus;
 	AVL_Node* rootNode;
@@ -41,12 +47,13 @@ private:
 	void _updateBalanceFactors(); 
 	int _calculateBalanceFactor(AVL_Node* focusNode); 
 	int _getNodeHeight(AVL_Node* focusNode); 
-	bool _checkForImbalance(char new_key[]); 
-	void _rotationHandler(AVL_Node* correctionCenter, AVL_Node* treeConnector, char new_key[]); 
+	bool _checkForImbalance(char new_key[], AVL_Node* insertedNode); 
+	void _rotationHandler(AVL_Node* correctionCenter); 
 	void RR_rotate(AVL_Node* correctionCenter);
 	void RL_rotate(AVL_Node* correctionCenter); 
 	void LL_rotate(AVL_Node * correctionCenter); 
 	void LR_rotate(AVL_Node *correctionCenter); 
 	int _getHeightOfNode(AVL_Node* focusNode);
 	void _clearChildrenPointers(AVL_Node* targetNode); 
+	void _newUpdate(AVL_Node* in_node); 
 };

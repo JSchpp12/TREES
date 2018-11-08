@@ -1,3 +1,8 @@
+//SkipList.cpp
+//Jacob Schaupp
+//EECS 2510, Fall 2018
+//11/7/2018
+//Contains logic for the SKipList data structure 
 #include "pch.h"
 #include "SkipList.h"
 #include <string.h>
@@ -35,8 +40,8 @@ SkipList::SkipList()
 
 void SkipList::Insert(char in_key[])
 {
-	std::cout << "skip list insert \n"; 
-	_insert(in_key); 
+		//std::cout << "skip list insert \n";
+		_insert(in_key);
 }
 
 int SkipList::List()
@@ -67,51 +72,85 @@ void SkipList::_insert(char in_key[])
 	skipNode *currentNode = bottomLeftNode; 
 	skipNode *searchNode = topLeftNode; 
 
-
-	while (searchRow != 0)
+	while (searchRow > 0)
 	{
-		while (strcmp(in_key, leaderNode->key) > 0)
+		while (strcmp(in_key, leaderNode->key) >= 0)
 		{
-			numOfComparisons++; 
+			if (searchRow != 0)
+			{
+				numOfComparisons++;
+				if (leaderNode)
+				{
+					if (strcmp(in_key, leaderNode->key) == 0)
+					{
+						//_increaseCounters(leaderNode);
+						for (int i = leaderNode->level; i--; i >= 0)
+						{
+							//leaderNode->counter++; 
+							leaderNode = leaderNode->downNode;
+						}
+						makeNewNode = false;
 
-			if (leaderNode->downNode != nullptr)
-			{
-				lastPathDown = leaderNode;
+						break;
+					}
+					if (leaderNode->downNode != nullptr)
+					{
+						lastPathDown = leaderNode;
+					}
+					if (leaderNode->rightNode != nullptr)
+					{
+						leaderNode = leaderNode->rightNode;
+					}
+					else
+					{
+						leaderNode = lastPathDown->downNode; 
+						searchRow--; 
+						break; 
+					}
+				}
+				leaderNode = lastPathDown->downNode;
+				searchRow--;
 			}
-			if (leaderNode->rightNode != nullptr)
-			{
-				leaderNode = leaderNode->rightNode;
-			}
-			else break;
+			else break; 
 		}
-		leaderNode = lastPathDown->downNode;
-		searchRow--;
+		if (strcmp(in_key, leaderNode->key) < 0) break;
 	}
 
 	//search bottom layer for the new node's place 
-	while (strcmp(in_key, leaderNode->key) > 0)
+	while (strcmp(in_key, leaderNode->key) >= 0)
 	{
-		numOfComparisons++;
+		if (leaderNode)
+		{
+			numOfComparisons++;
+			if (strcmp(in_key, leaderNode->key) == 0)
+			{
+				_increaseCounters(leaderNode);
+				makeNewNode = false;
+				break;
+			}
+			else if (leaderNode->rightNode != nullptr)
+			{
+				laggerNode = leaderNode;
+				leaderNode = leaderNode->rightNode;
+			}
 
-		if (leaderNode->rightNode != nullptr)
-		{
-			laggerNode = leaderNode;
-			leaderNode = leaderNode->rightNode;
-		}
-		else if (strcmp(in_key, leaderNode->key) == 0)
-		{
-			_increaseCounters(leaderNode);
-			makeNewNode = false;
+			else
+			{
+				//reached end of the list 
+				laggerNode = leaderNode;
+				leaderNode = nullptr;
+				break;
+			}
 		}
 		else
 		{
-			//reached end of the list 
-			laggerNode = leaderNode;
-			leaderNode = nullptr;
-			break;
+			
 		}
 	}
-
+	if (leaderNode == laggerNode)
+	{
+		leaderNode = nullptr; 
+	}
 	if (makeNewNode == true) _createNewNode(laggerNode, leaderNode, in_key); 
 }
 
@@ -171,11 +210,13 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 			nextMaxNode.rightNode = nullptr; 
 			nextMaxNode.leftNode = nullptr; 
 			nextMaxNode.upNode = nullptr; 
-			
+			nextMaxNode.downNode = leftNodes[lowerLevel];
+
 			nodeStorage[nodeStorage_index] = nextMaxNode; 
 			
+
 			leftNodes[lowerLevel]->upNode = &nodeStorage[nodeStorage_index];
-			nodeStorage[nodeStorage_index].downNode = leftNodes[lowerLevel];
+			//nodeStorage[nodeStorage_index]->downNode = &leftNodes[lowerLevel];
 			numOfPointerChange = numOfPointerChange + 2; 
 
 			leftNodes[level] = &nodeStorage[nodeStorage_index]; 
@@ -190,7 +231,7 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 		//find place in height where the new copy should go -- get left and right pointers for new node
 		while (strcmp(in_key, leaderNode->key) > 0)
 		{
-			numOfComparisons++; 
+			//numOfComparisons++; 
 
 			if (leaderNode->rightNode != nullptr)
 			{
@@ -208,14 +249,22 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 
 		upNode.level = level; 
 		strcpy(upNode.key, in_key);
+		//upNode.leftNode = laggerNode; 
 		if (laggerNode != nullptr) upNode.leftNode = laggerNode; 
 		else upNode.leftNode = leftNodes[level]; 
 		numOfPointerChange++; 
 
+		skipNode *farLeftPointer = bottomLeftNode;
+		for (int i = 0; i < level; i++)
+		{
+			farLeftPointer = bottomLeftNode->upNode;
+		}
+
 		if (leaderNode != nullptr)
 		{
 			numOfPointerChange++; 
-			upNode.rightNode = leaderNode;
+			if (leaderNode != leftNodes[level])upNode.rightNode = leaderNode;
+			else upNode.rightNode = nullptr; 
 		}
 		else upNode.rightNode = nullptr; 
 
@@ -230,14 +279,16 @@ void SkipList::_createNewNode(skipNode *leftNode, skipNode *rightNode, char in_k
 		//set pointers of nodes around nextHighest to respect nextHighest 
 		if (highestCopy != nullptr) highestCopy->upNode = &nodeStorage[nodeStorage_index];
 
+		 
 		if (nodeStorage[nodeStorage_index].rightNode != nullptr)
 		{
-			nodeStorage[nodeStorage_index].rightNode->leftNode = &nodeStorage[nodeStorage_index];
-			numOfPointerChange++; 
+		nodeStorage[nodeStorage_index].rightNode->leftNode = &nodeStorage[nodeStorage_index];
+		numOfPointerChange++;
 		}
+		
 		//left node should never be null pointer, dont need to worry about it 
-		nodeStorage[nodeStorage_index].leftNode->rightNode = &nodeStorage[nodeStorage_index]; 
-		numOfPointerChange++; 
+		//nodeStorage[nodeStorage_index].leftNode->rightNode = &nodeStorage[nodeStorage_index]; 
+		//numOfPointerChange++; 
 
 		highestCopy = &nodeStorage[nodeStorage_index]; 
 		nodeStorage_index++; 
@@ -268,21 +319,21 @@ int SkipList::_traverse()
 		for (int i = NumOflevels; i >= 0; i--)
 		{
 			currentNode = leftNodes[i]; 
-			std::cout << "Level : " << i << "\n"; 
+			//std::cout << "Level : " << i << "\n"; 
 
 			while (currentNode!= nullptr)
 			{
 				if (currentNode != leftNodes[i])
 				{
 					numOfItems++; 
-					std::cout << currentNode->key << " , ";
+					//std::cout << currentNode->key << " , ";
 				}
 				currentNode = currentNode->rightNode;
 			} 
-			std::cout << "\n"; 
+			//std::cout << "\n"; 
 		}
 	}
-	else std::cout << "Empty"; 
+	//else std::cout << "Empty"; 
 	return numOfItems; 
 }
 

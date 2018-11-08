@@ -1,3 +1,9 @@
+//AVL.cpp
+//Jacob Schaupp
+//EECS 2510, Fall 2018
+//11/7/2018
+//Contains logic for the AVL data structure 
+
 #include "pch.h"
 #include "AVL.h"
 #include <string.h>
@@ -11,23 +17,20 @@ AVL::AVL()
 
 void AVL::Insert(char in_key[])
 {
-	std::cout << "AVL insert \n"; 
-	int insertIndex;
-	bool correctionNeeded;
-
-	/*
-	1. insert new node
-	2. calculate new BFs
-	3. check for a BF that is out of spec
-	4. figure out what type of rotation is needed
-	5. correct with necessary rotation type
-	*/
-
-	insertIndex = _insert(in_key);
-	_updateBalanceFactors();
-	std::cout << "rootBF = " << rootNode->BF << "\n";
-	correctionNeeded = _checkForImbalance(in_key);
-
+	if (nodeStorage_index < 10000)
+	{
+		int insertIndex;
+		bool correctionNeeded;
+		/*
+		1. insert new node
+		2. calculate new BFs
+		3. check for a BF that is out of spec
+		4. figure out what type of rotation is needed
+		5. correct with necessary rotation type
+		*/
+		insertIndex = _insert(in_key);
+		_newUpdate(&nodeStorage[nodeStorage_index - 1]);
+	}
 }
 
 void AVL::GetTreeInfo()
@@ -259,13 +262,19 @@ void AVL::_updateBalanceFactors()
 	bool complete = false;
 	AVL_Node* currentNode; 
 	currentNode = rootNode; 
+	AVL_Node* correctionCenter = nullptr; 
 
 	do
 	{
 		prevBF = currentNode->BF; 
 		currentNode->BF = _calculateBalanceFactor(currentNode); 
 		numOfBFChanges++; 
-		if (currentNode->BF < prevBF)
+
+		//check if node's BF needs correction, mark it for correction if so 
+		if ((currentNode->BF == -2) || (currentNode->BF == 2)) correctionCenter = currentNode; 
+
+		//if (currentNode->BF < prevBF)
+		if (currentNode->BF < 0)
 		{
 			//insert occured in right subtree, follow this down 
 			if (currentNode->rightChild != nullptr)
@@ -274,7 +283,8 @@ void AVL::_updateBalanceFactors()
 			}
 			else complete = true; 
 		}
-		else if (currentNode->BF > prevBF)
+		//else if (currentNode->BF > prevBF)
+		else if (currentNode->BF > 0)
 		{
 			//insert occured in left subtree, follw this down 
 			if (currentNode->leftChild != nullptr)
@@ -289,9 +299,12 @@ void AVL::_updateBalanceFactors()
 			complete = true; 
 		}
 	} while (complete == false);
+
+	//perform rotation on the node that is out of spec
+	if (correctionCenter) _rotationHandler(correctionCenter); 
 }
 
-bool AVL::_checkForImbalance(char new_key[])
+bool AVL::_checkForImbalance(char new_key[], AVL_Node* insertedNode)
 {
 	//this will not work long term, need to pass something in to indicate which subtree to look at after the insertion
 
@@ -300,7 +313,9 @@ bool AVL::_checkForImbalance(char new_key[])
 	//start check from rootnode 
 	bool done = false;
 	bool correctionNeeded = false; 
+	bool complete = false; 
 
+	
 	//cannot depend on root node being incorrect 
 	if ((rootNode->BF >= 2) || (rootNode->BF <= -2))
 	{
@@ -314,7 +329,7 @@ bool AVL::_checkForImbalance(char new_key[])
 				{
 					//the focusNode now is the highest ancestor where the roatation needs to occur
 					//cout << focusNode->key << "\n";
-					_rotationHandler(focusNode, focusNode->parent, new_key); 
+					_rotationHandler(focusNode); 
 					done = true;
 					correctionNeeded = true; 
 				}
@@ -327,7 +342,7 @@ bool AVL::_checkForImbalance(char new_key[])
 				if ((focusNode->rightChild->BF < 2) && (focusNode->rightChild->BF > -2))
 				{
 					//the focusNode now is the highest ancestor where the roatation needs to occur
-					_rotationHandler(focusNode, focusNode->parent, new_key);
+					_rotationHandler(focusNode);
 					//cout << focusNode->key << "\n";
 					done = true;
 					correctionNeeded = true; 
@@ -335,60 +350,70 @@ bool AVL::_checkForImbalance(char new_key[])
 				else focusNode = focusNode->rightChild;
 			}
 		} while (done == false);
-		std::cout << focusNode->key << "\n";
 	}
-	std::cout << "Completed Check \n";
 	return correctionNeeded; 
 }
 
-void AVL::_rotationHandler(AVL_Node* correctionCenter, AVL_Node* treeConnector, char new_key[])
+void AVL::_rotationHandler(AVL_Node* correctionCenter)
 {
-	char tempContainer[50]; 
+	//correctionCenter will be the lowest node with a BF that is out of spec and requires rotation to correct 
 
-	if (correctionCenter->BF == -2)
+	//insertionSide: 
+	//1 - left 
+	//2 - right
+
+	int temp = nodeStorage_index - 1;
+	AVL_Node *insertedNode = &nodeStorage[temp];
+	AVL_Node *grandparentNode = nullptr;
+	AVL_Node *loopNode = nullptr;
+
+	char tempContainer[50];
+	int direction1 = 0;
+	int direction2 = 0;
+
+	if (correctionCenter->BF >= 2)
 	{
-		//insertion was done in either 
-		//x's right subtree's left subtree 
-		//x's right subtree's right subtree
-		//look for the nodes below and see if BF = 1, then look at that nodes child and look for the new_key
-		if (correctionCenter->rightChild->BF == -1)
+		//left subtree too big 
+		if (correctionCenter->leftChild->BF > 0)
 		{
-			//insertion was done in the right (RR)
-			RR_rotate(correctionCenter); 
+			//inserted node was in the left subtree of the left node LL
+			LL_rotate(correctionCenter); 
 		}
-		else if (correctionCenter->rightChild->BF == 1)
+		else
 		{
-			//insertion was done in the left(RL)
-			RL_rotate(correctionCenter); 
+			//LR 
+			LR_rotate(correctionCenter);
 		}
 	}
-	else if (correctionCenter->BF == 2)
+	else
 	{
-		//insertion was done in either 
-		//x's left subtree's left subtree
-		//x's left subtree's right subtree
-		if (correctionCenter->leftChild->BF == -1)
+		if (correctionCenter->rightChild->BF > 0)
 		{
-			//insertion was done on the right (LR)
-			LR_rotate(correctionCenter); 
+			//left subtree of right node RL 
+			RL_rotate(correctionCenter);
 		}
-		else if (correctionCenter->leftChild->BF == 1)
+		else
 		{
-			//insertion was done on the right (LL)
-			LL_rotate(correctionCenter); 
+			//RR rotate, should be 
+			RR_rotate(correctionCenter); 
 		}
 	}
 }
 
+//IN RR ROTATION -------------------------------------------------------
+//Made a new thing that copies the right child of the middle node to be moved after the rotation per the rotation method 
+//NEED DYNAMIC MEMORY ALLOCATION RATHER THAN THE ARRAY ACCORDING TO DR>SHIT 
+
 void AVL::RR_rotate(AVL_Node* correctionCenter)
 {
-	std::cout << "Performing RR rotation on " << correctionCenter->key << "\n"; 
 	//these names are in regard to describing the orientation before the rotation
-	AVL_Node *middleOfRotation, *treeConnector, *bottomRotation; 
-	AVL_Node* tempHolder = nullptr; 
+	AVL_Node *middleOfRotation, *bottomRotation; 
+	AVL_Node* tempHolder = nullptr;
+	AVL_Node *treeConnector = nullptr; 
 
 	//this node will become the root of the subtree after the rotation
-	middleOfRotation = correctionCenter->rightChild;
+	if (correctionCenter->rightChild) middleOfRotation = correctionCenter->rightChild;
+	else middleOfRotation = correctionCenter->leftChild; 
 	
 	//this node will be the parent of the root of the subtree after rotation -- will be right child of the treeConnector 
 	
@@ -417,7 +442,7 @@ void AVL::RR_rotate(AVL_Node* correctionCenter)
 		rootNode = middleOfRotation; 
 		middleOfRotation->parent = nullptr; 
 	}
-
+	
 	//set the correctionCenter as the left child of the new root of the subtree
 	if ((middleOfRotation->leftChild != nullptr) && (middleOfRotation->rightChild == nullptr))
 	{
@@ -446,16 +471,25 @@ void AVL::RR_rotate(AVL_Node* correctionCenter)
 		numOfPointerChanges++; 
 	}
 	//rotation should be complete 
-	_updateBalanceFactors(); 
+	//_updateBalanceFactors(); 
+	//_newUpdate(rootNode);
+
+	//correctionCenter->BF = _calculateBalanceFactor(correctionCenter);
+	//middleOfRotation->BF = _calculateBalanceFactor(middleOfRotation);
+	//if (treeConnector)_newUpdate(treeConnector);
 }
 
 void AVL::LL_rotate(AVL_Node* correctionCenter)
 {
-	AVL_Node *middleOfRotation, *treeConnector, *bottomRotation;
+	AVL_Node *middleOfRotation, *bottomRotation;
 	AVL_Node *tempHolder = nullptr;
+	AVL_Node *treeConnector = nullptr; 
+
+	AVL_Node *middleOfRotation_RightSubtree = nullptr; 
 
 	//this node will become the root of the subtree after the rotation
 	middleOfRotation = correctionCenter->leftChild;
+	//if (middleOfRotation->rightChild) middleOfRotation_RightSubtree = middleOfRotation->rightChild; 
 
 	//this node will be the parent of the root of the subtree after rotation
 	treeConnector = correctionCenter->parent;
@@ -507,13 +541,26 @@ void AVL::LL_rotate(AVL_Node* correctionCenter)
 		numOfPointerChanges = numOfPointerChanges + 2;
 	}
 
+	//copy the nodes across to new location on other side of tree
+	
+	if (middleOfRotation_RightSubtree)
+	{
+		if (middleOfRotation_RightSubtree->leftChild)middleOfRotation_RightSubtree->leftChild = nullptr;
+
+		correctionCenter->leftChild = middleOfRotation_RightSubtree;
+		middleOfRotation_RightSubtree->parent = correctionCenter->leftChild; 
+	}
+	   
 	//this node is now a leaf
 	correctionCenter->leftChild = nullptr;
 	//correctionCenter->rightChild = nullptr; 
 	//correctionCenter->BF = 0; 
 
 	//rotation should be complete 
-	_updateBalanceFactors();
+	//_updateBalanceFactors();
+	//correctionCenter->BF = _calculateBalanceFactor(correctionCenter);
+	//middleOfRotation->BF = _calculateBalanceFactor(middleOfRotation);
+	//if (treeConnector)_newUpdate(treeConnector);
 }
 
 void AVL::LR_rotate(AVL_Node *correctionCenter)
@@ -533,6 +580,7 @@ void AVL::RL_rotate(AVL_Node *correctionCenter)
 
 int AVL::_calculateBalanceFactor(AVL_Node* tippingNode)
 {
+
 	int rightHeight, leftHeight; 
 	if (tippingNode->rightChild != nullptr)
 	{
@@ -546,6 +594,7 @@ int AVL::_calculateBalanceFactor(AVL_Node* tippingNode)
 	}
 	else leftHeight = 0; 
 	 
+	_getNodeHeight(tippingNode); 
 	return (leftHeight - rightHeight); 
 }
 
@@ -594,11 +643,40 @@ void AVL::_traverse(AVL_Node* in_node)
 	{
 		numOfItems = numOfItems + in_node->counter;
 		_traverse(in_node->leftChild);
-		//std::cout << in_node->key << " " << in_node->counter << "\n";
 		_traverse(in_node->rightChild);
 	}
 	else
 	{
 		return;
+	}
+}
+
+void AVL::_newUpdate(AVL_Node* in_node)
+{
+	//update BFs using traverse idea 
+
+	bool complete = false; 
+	AVL_Node* correctionCenter = nullptr; 
+
+	do
+	{
+		//start at inserted node and work up to root to calculate new BFs
+		in_node->BF = _calculateBalanceFactor(in_node);
+		numOfBFChanges++; 
+
+		if ((in_node->BF == 2) || (in_node->BF == -2))
+		{
+			//this is node where rotation needs to occur
+			if (!correctionCenter) correctionCenter = in_node; 
+		}
+
+		if (in_node == rootNode) complete = true; 
+		else in_node = in_node->parent;  
+
+	} while (complete == false);
+
+	if (correctionCenter)
+	{
+		_rotationHandler(correctionCenter);
 	}
 }

@@ -1,3 +1,9 @@
+//BST.cpp
+//Jacob Schaupp
+//EECS 2510, Fall 2018
+//11/7/2018
+//Contains logic for the BST data structure 
+
 #include "pch.h"
 #include "BST.h"
 
@@ -13,6 +19,7 @@ void BST::List()
 void BST::GetTreeInfo()
 {
 	_traverse(rootNode); 
+	
 	std::cout << "Binary Search Tree Info...\n"; 
 	std::cout << "Number of Comparisons: " << numOfComparisons << "\n"; 
 	std::cout << "Number of Items: " << numOfItems << "\n"; 
@@ -20,7 +27,6 @@ void BST::GetTreeInfo()
 
 void BST::Insert(char in_key[])
 {
-	std::cout << "Binar tree insert"; 
 	int in_weight = 0; 
 	bool cont = false;
 	bool done = false;
@@ -220,7 +226,7 @@ void BST::_traverse(Node* in_node)
 	{
 		numOfItems = numOfItems + in_node->counter;
 		_traverse(in_node->leftChild);
-		std::cout << in_node->key << " " << in_node->counter << "\n";
+		//std::cout << in_node->key << " " << in_node->counter << "\n";
 		_traverse(in_node->rightChild);
 	}
 	else

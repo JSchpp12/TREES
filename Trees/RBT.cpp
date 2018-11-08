@@ -1,3 +1,9 @@
+//RBT.cpp
+//Jacob Schaupp
+//EECS 2510, Fall 2018
+//11/7/2018
+//Contains logic for the RBT data structure 
+
 #include "pch.h"
 #include "RBT.h"
 #include <string.h>
@@ -14,7 +20,6 @@ RBT::RBT()
 
 void RBT::Insert(char in_key[])
 {
-	std::cout << "RBT insert \n"; 
 	_insert(in_key);
 }
 
@@ -451,7 +456,6 @@ void RBT::LL_rotate(RBT_Node* correctionCenter, bool call_multi)
 	//this node will be the parent of the root of the subtree after rotation
 	treeConnector = correctionCenter->parent;
 
-
 	if (correctionCenter != rootNode)
 	{
 		//set the middle node as the root of the subtree
@@ -513,7 +517,6 @@ void RBT::_traverse(RBT_Node* in_node)
 	{
 		numOfItems = numOfItems + in_node->counter;
 		_traverse(in_node->leftChild);
-		std::cout << in_node->key << " " << in_node->counter << "\n";
 		_traverse(in_node->rightChild);
 	}
 	else

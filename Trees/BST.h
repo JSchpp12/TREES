@@ -1,3 +1,9 @@
+//BST.h
+//Jacob Schaupp
+//EECS 2510, Fall 2018
+//11/7/2018
+//Contains the header information for the BST class
+
 #pragma once
 #include <fStream>
 #include <ioStream>
@@ -28,7 +34,7 @@ public:
 
 private: 
 	Node* currentFocus; 
-	Node nodeStorage[1000]; 
+	Node nodeStorage[50000]; 
 	Node* rootNode; 
 	int nodeStorage_index = 0; 
 
